@@ -16,6 +16,7 @@ A fullstack personal finance management application designed to track incomes, e
 ## 🚀 Setup & Installation
 
 Make sure to install dependencies before running the application:
+
 ```bash
 # npm (Recommended)
 npm install
@@ -29,13 +30,18 @@ yarn install
 # bun
 bun install
 
-🔐 Environment Variables
+```
+
+## 🔐 Environment Variables
 Create a .env file in the root directory and configure your Supabase credentials:
 ```bash
 SUPABASE_URL="your-supabase-project-url"
+
 SUPABASE_KEY="your-supabase-anon-key"
 
-💻 Development Server
+```
+
+## 💻 Development Server
 Start the development server on http://localhost:3000:
 ```bash
 # npm (Recommended)
@@ -50,7 +56,9 @@ yarn dev
 # bun
 bun run dev
 
-📦 Production
+```
+
+## 📦 Production
 Build the application for production:
 ```bash
 # npm (Recommended)
@@ -65,7 +73,9 @@ yarn build
 # bun
 bun run build
 
-Locally preview the production build:
+```
+
+## Locally preview the production build:
 ```bash
 # npm (Recommended)
 npm run preview
