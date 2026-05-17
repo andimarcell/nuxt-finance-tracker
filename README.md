@@ -30,15 +30,20 @@ yarn install
 # bun
 bun install
 
+
+
 🔐 Environment Variables
 Create a .env file in the root directory and configure your Supabase credentials:
 
+```env
 SUPABASE_URL="your-supabase-project-url"
 SUPABASE_KEY="your-supabase-anon-key"
+
 
 💻 Development Server
 Start the development server on http://localhost:3000:
 
+```bash
 # npm (Recommended)
 npm run dev
 
@@ -54,6 +59,7 @@ bun run dev
 📦 Production
 Build the application for production:
 
+```bash
 # npm (Recommended)
 npm run build
 
@@ -68,6 +74,7 @@ bun run build
 
 Locally preview the production build:
 
+```bash
 # npm (Recommended)
 npm run preview
 
