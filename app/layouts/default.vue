@@ -16,6 +16,7 @@ useHead({
 
 <template>
     <div class="container mx-auto max-w-4xl">
+        <Header/>
         <main class="my-10">
             <slot />
         </main>
@@ -23,4 +24,7 @@ useHead({
 </template>
 
 <style>
+
+
+
 </style>
