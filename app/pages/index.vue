@@ -18,28 +18,24 @@ const selectedView = ref(transactionViewsItems[1]);
       title="Income"
       :amount="1000"
       :lastAmount="500"
-      color="green"
       :loading="false"
     />
     <Trend
       title="Expenses"
       :amount="1000"
-      :lastAmount="500"
-      color="red"
+      :lastAmount="3000"
       :loading="false"
     />
     <Trend
       title="Savings"
-      :amount="1000"
-      :lastAmount="500"
-      color="green"
+      :amount="2000"
+      :lastAmount="1500"
       :loading="false"
     />
     <Trend
       title="Budget"
       :amount="1000"
       :lastAmount="500"
-      color="red"
       :loading="true"
     />
   </section>
