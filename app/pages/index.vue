@@ -1,6 +1,26 @@
 <script setup>
 import { transactionViewsItems } from "~/utils/constants";
 const selectedView = ref(transactionViewsItems[1]);
+
+const supabase = useSupabaseClient();
+
+// const { data, error } = await supabase
+//   .from('transactions')
+//   .select('amount, type')
+
+// console.log('data', data, 'error', error);
+// const { count, error } = await supabase
+//   .from('transactions')
+//   .select('*', { count: 'exact', head: true })
+
+//   console.log('count', count, 'error', error);
+
+const { data, error } = await supabase
+  .from("transactions")
+  .select("amount, type")
+  .eq("type", "income");
+
+console.log("data", data, "error", error);
 </script>
 
 <template>
