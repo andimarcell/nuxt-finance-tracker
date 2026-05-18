@@ -1,4 +1,5 @@
 <script setup>
+
 const props = defineProps({
   title: String,
   amount: Number,
@@ -18,6 +19,19 @@ const color = computed(() =>
     ? "text-green-600 dark:text-green-400"
     : "text-red-600 dark:text-red-400",
 );
+
+const percentageTrend = computed(() => {
+  if (props.lastAmount === 0 || props.amount === 0) return '0%'; // Avoid division by zero
+  if (props.lastAmount === 0) return '100%'; // Kalau bulan lalu 0, sekarang ada isi, artinya tumbuh 100% (dari nol)
+  
+  const bigger = Math.max(props.amount, props.lastAmount);
+  const lower = Math.min(props.amount, props.lastAmount);
+  // Dibagi lower (karena lower adalah base pembanding untuk nyari selisih)
+  const ratio = ((bigger - lower) / lower) * 100;
+
+  console.log('bigger', bigger,' lower', lower,' ratio', ratio, Math.round(ratio));
+    return `${Math.round(ratio)}%`;
+});
 </script>
 
 <template>
@@ -32,7 +46,7 @@ const color = computed(() =>
       <div v-else class="flex items-center space-x-1 text-sm">
         <UIcon :name="icon" class="h-6 w-6" :class="color" />
         <span class="text-gray-500 dark:text-gray-400">
-          30% from last period
+          {{ percentageTrend }} from last period
         </span>
       </div>
     </div>
