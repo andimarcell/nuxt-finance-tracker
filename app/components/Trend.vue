@@ -29,7 +29,7 @@ const percentageTrend = computed(() => {
   // Dibagi lower (karena lower adalah base pembanding untuk nyari selisih)
   const ratio = ((bigger - lower) / lower) * 100;
 
-  console.log('bigger', bigger,' lower', lower,' ratio', ratio, Math.round(ratio));
+  // console.log('bigger', bigger,' lower', lower,' ratio', ratio, Math.round(ratio));
     return `${Math.round(ratio)}%`;
 });
 
@@ -48,7 +48,7 @@ const { currency } = useCurrency(props.amount);
         <div class="flex items-start">
           <span>{{ currency.main }}</span>
           <!-- sup bikin teks naik, text-sm ngecilin ukurannya -->
-          <sup class="text-sm font-bold ml-0.5 mt-1 opacity-70">{{ currency.fraction }}</sup>
+          <sup class="text-sm font-semibold ml-0.5 mt-1 opacity-70">{{ currency.fraction }}</sup>
         </div>
         
         <!-- Tulisan Loading sementara (optional) -->
