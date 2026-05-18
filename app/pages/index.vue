@@ -11,6 +11,20 @@ const { data, pending } = await useAsyncData("transactions", async () => {
   return data;
 });
 transactions.value = data.value;
+
+const transactionGroupByDate = computed(() => {
+  let grouped = {};
+
+  for(const transaction of transactions.value) {
+    const date = new Date(transaction.created_at).toISOString().split('T')[0]; // Ambil tanggal saja (YYYY-MM-DD)
+    if (!grouped[date]) {
+      grouped[date] = [];
+    }
+    grouped[date].push(transaction);
+  }
+  return grouped;
+});
+console.log( transactionGroupByDate.value);
 // const { data, error } = await supabase
 //   .from('transactions')
 //   .select('amount, type')
