@@ -41,7 +41,21 @@ const { currency } = useCurrency(props.amount);
     <div class="font-bold" :class="color">{{ title }}</div>
     <div class="text-2xl font-extrabold text-black dark:text-white mb-2">
       <USkeleton class="h-8 w-full" v-if="loading" />
-      <span v-else>{{ currency }}</span>
+      
+      <!-- Kita pakai ClientOnly buat ngehindarin error merah (Hydration mismatch) -->
+      <ClientOnly v-else>
+        <!-- Flex items-start bikin teks sejajar di atas -->
+        <div class="flex items-start">
+          <span>{{ currency.main }}</span>
+          <!-- sup bikin teks naik, text-sm ngecilin ukurannya -->
+          <sup class="text-sm font-bold ml-0.5 mt-1 opacity-70">{{ currency.fraction }}</sup>
+        </div>
+        
+        <!-- Tulisan Loading sementara (optional) -->
+        <template #fallback>
+          <USkeleton class="h-8 w-3/4" />
+        </template>
+      </ClientOnly>
     </div>
     <div>
       <USkeleton class="h-6 w-full" v-if="loading" />
