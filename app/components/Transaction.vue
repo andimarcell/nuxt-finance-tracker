@@ -2,7 +2,25 @@
 const props = defineProps({
   transaction: Object,
 });
+
 const { currency: amount } = useCurrency(props.transaction.amount);
+
+const isIncome = computed(() => props.transaction.type === "income");
+const icon = computed(() => {
+    if (isIncome.value) {
+        return "i-heroicons-arrow-up-right"
+    } else {
+        return "i-heroicons-arrow-down-left"
+    }
+});
+
+const iconColor = computed(() => {
+    if (isIncome.value) {
+        return "text-green-500"
+    } else {
+        return "text-red-500"
+    }
+});
 
 const actions = [
   [
@@ -23,10 +41,10 @@ const actions = [
 </script>
 
 <template>
-  <div class="grid grid-cols-2">
+  <div class="grid grid-cols-2 space-y-6">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-1">
-        <UIcon name="i-heroicons-arrow-up-right" class="text-green-500" />
+        <UIcon :name="icon" :class="[iconColor]" />
         <div>{{ transaction.description }}</div>
       </div>
       <div>
