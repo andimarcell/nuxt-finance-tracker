@@ -1,9 +1,16 @@
 <script setup>
 import { transactionViewsItems } from "~/utils/constants";
-const selectedView = ref(transactionViewsItems[1]);
 
 const supabase = useSupabaseClient();
+const selectedView = ref(transactionViewsItems[1]);
+const transactions = ref([]);
 
+const { data, pending } = await useAsyncData("transactions", async () => {
+  const { data, error } = await supabase.from("transactions").select();
+  if (error) return [];
+  return data;
+});
+transactions.value = data.value;
 // const { data, error } = await supabase
 //   .from('transactions')
 //   .select('amount, type')
@@ -15,12 +22,12 @@ const supabase = useSupabaseClient();
 
 //   console.log('count', count, 'error', error);
 
-const { data, error } = await supabase
-  .from("transactions")
-  .select("amount, type")
-  .eq("type", "income");
+// const { data, error } = await supabase
+//   .from("transactions")
+//   .select("amount, type")
+//   .eq("type", "income");
 
-console.log("data", data, "error", error);
+// console.log("data", data, "error", error);
 </script>
 
 <template>
@@ -46,9 +53,10 @@ console.log("data", data, "error", error);
   </section>
 
   <section>
-    <Transaction />
-    <Transaction />
-    <Transaction />
-    <Transaction />
+    <Transaction
+      v-for="(transaction, index) in transactions"
+      :key="index"
+      :transaction="transaction"
+    />
   </section>
 </template>

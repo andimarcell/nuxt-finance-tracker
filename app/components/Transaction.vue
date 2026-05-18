@@ -1,5 +1,8 @@
 <script setup>
-const { currency: amount } = useCurrency(1200);
+const props = defineProps({
+  transaction: Object,
+});
+const { currency: amount } = useCurrency(props.transaction.amount);
 
 const actions = [
   [
@@ -24,10 +27,10 @@ const actions = [
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-1">
         <UIcon name="i-heroicons-arrow-up-right" class="text-green-500" />
-        <div>Salary</div>
+        <div>{{ transaction.description }}</div>
       </div>
       <div>
-        <UBadge color="neutral" variant="outline">Income</UBadge>
+        <UBadge color="neutral" variant="outline">{{ transaction.type }}</UBadge>
       </div>
     </div>
     <div class="flex items-center justify-end space-x-2">
