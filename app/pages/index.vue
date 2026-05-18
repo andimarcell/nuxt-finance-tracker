@@ -24,7 +24,7 @@ const transactionGroupByDate = computed(() => {
   }
   return grouped;
 });
-console.log( transactionGroupByDate.value);
+// console.log( transactionGroupByDate.value);
 // const { data, error } = await supabase
 //   .from('transactions')
 //   .select('amount, type')

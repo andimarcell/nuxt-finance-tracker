@@ -41,7 +41,7 @@ const actions = [
 </script>
 
 <template>
-  <div class="grid grid-cols-2 space-y-6">
+  <div class="grid grid-cols-2 space-y-2 border-b border-gray-800 py-2 mt-2">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-1">
         <UIcon :name="icon" :class="[iconColor]" />
@@ -51,7 +51,7 @@ const actions = [
         <UBadge color="neutral" variant="outline">{{ transaction.type }}</UBadge>
       </div>
     </div>
-    <div class="flex items-center justify-end space-x-2">
+    <div class="flex items-center justify-end space-x-2 mb-1">
       <!-- Flex items-start bikin teks sejajar di atas -->
       <div class="flex items-start">
         <span class="text-md">{{ amount.main }}</span>
