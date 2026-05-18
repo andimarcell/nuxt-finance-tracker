@@ -32,6 +32,8 @@ const percentageTrend = computed(() => {
   console.log('bigger', bigger,' lower', lower,' ratio', ratio, Math.round(ratio));
     return `${Math.round(ratio)}%`;
 });
+
+const { currency } = useCurrency(props.amount);
 </script>
 
 <template>
@@ -39,7 +41,7 @@ const percentageTrend = computed(() => {
     <div class="font-bold" :class="color">{{ title }}</div>
     <div class="text-2xl font-extrabold text-black dark:text-white mb-2">
       <USkeleton class="h-8 w-full" v-if="loading" />
-      <span v-else>{{ amount }}</span>
+      <span v-else>{{ currency }}</span>
     </div>
     <div>
       <USkeleton class="h-6 w-full" v-if="loading" />
