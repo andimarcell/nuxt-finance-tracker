@@ -14,29 +14,21 @@ const selectedView = ref(transactionViewsItems[1]);
   <section
     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-16 mb-10 gap-8"
   >
-    <Trend
-      title="Income"
-      :amount="1000"
-      :lastAmount="500"
-      :loading="false"
-    />
+    <Trend title="Income" :amount="1000" :lastAmount="500" :loading="false" />
     <Trend
       title="Expenses"
       :amount="1000"
       :lastAmount="3000"
       :loading="false"
     />
-    <Trend
-      title="Savings"
-      :amount="2000"
-      :lastAmount="1500"
-      :loading="false"
-    />
-    <Trend
-      title="Budget"
-      :amount="1000"
-      :lastAmount="500"
-      :loading="true"
-    />
+    <Trend title="Savings" :amount="2000" :lastAmount="1500" :loading="false" />
+    <Trend title="Budget" :amount="1000" :lastAmount="500" :loading="true" />
+  </section>
+
+  <section>
+    <Transaction />
+    <Transaction />
+    <Transaction />
+    <Transaction />
   </section>
 </template>
