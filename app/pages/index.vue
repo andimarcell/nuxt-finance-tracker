@@ -4,16 +4,45 @@ import { transactionViewsItems } from "~/utils/constants";
 const supabase = useSupabaseClient();
 const selectedView = ref(transactionViewsItems[1]);
 const transactions = ref([]);
+const isLoading = ref(false);
+// const { data, pending } = await useAsyncData("transactions", async () => {
+//   const { data, error } = await supabase.from("transactions").select().order("created_at", { ascending: false });
+//   if (error) return [];
+//   return data;
+// });
 
-const { data, pending } = await useAsyncData("transactions", async () => {
-  const { data, error } = await supabase.from("transactions").select().order("created_at", { ascending: false });
-  if (error) return [];
-  return data;
-});
-transactions.value = data.value;
+const fetchTransactions = async () => {
+  isLoading.value = true;
+  try {
+    // Panggil langsung client Supabase, jangan pakai useAsyncData di sini
+    const { data, error } = await supabase
+      .from("transactions")
+      .select()
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    return [];
+  } finally {
+    isLoading.value = false;
+  }
+};
+// transactions.value = await fetchTransactions();
+
+const refreshTransactions = async () => {
+  transactions.value = await fetchTransactions();
+};
+
+await refreshTransactions();
 
 const transactionGroupByDate = computed(() => {
   let grouped = {};
+
+  if (!transactions.value) {
+    return grouped;
+  }
 
   for (const transaction of transactions.value) {
     const date = new Date(transaction.created_at).toISOString().split("T")[0]; // Ambil tanggal saja (YYYY-MM-DD)
@@ -24,6 +53,36 @@ const transactionGroupByDate = computed(() => {
   }
   return grouped;
 });
+
+const incomeTotal = computed(() => {
+  return transactions.value
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + Number(t.amount), 0); // Pastikan amount di-Number kan
+});
+
+const expenseTotal = computed(() => {
+  return transactions.value
+    .filter((t) => t.type === "expense")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+});
+
+const savingsTotal = computed(() => {
+  const thisMonth = new Date().getMonth();
+  const currentMonthTransactions = transactions.value.filter(t => {
+    return new Date(t.created_at).getMonth() === thisMonth;
+  });
+  
+  return currentMonthTransactions.reduce((acc, t) => {
+    return t.type === 'income' ? acc + Number(t.amount) : acc - Number(t.amount);
+  }, 0);
+});
+
+const balanceTotal = computed(() => {
+  return transactions.value.reduce((acc, t) => {
+    return t.type === 'income' ? acc + Number(t.amount) : acc - Number(t.amount);
+  }, 0);
+});
+
 // console.log( transactionGroupByDate.value);
 // const { data, error } = await supabase
 //   .from('transactions')
@@ -55,18 +114,33 @@ const transactionGroupByDate = computed(() => {
   <section
     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-16 mb-10 gap-8"
   >
-    <Trend title="Income" :amount="1000" :lastAmount="500" :loading="false" />
+    <Trend
+      title="Income"
+      :amount="incomeTotal"
+      :lastAmount="500"
+      :loading="isLoading"
+    />
     <Trend
       title="Expenses"
-      :amount="1000"
+      :amount="expenseTotal"
       :lastAmount="3000"
-      :loading="false"
+      :loading="isLoading"
     />
-    <Trend title="Savings" :amount="2000" :lastAmount="1500" :loading="false" />
-    <Trend title="Budget" :amount="1000" :lastAmount="500" :loading="true" />
+    <Trend
+      title="Savings"
+      :amount="savingsTotal"
+      :lastAmount="1500"
+      :loading="isLoading"
+    />
+    <Trend
+      title="Cash on Hand"  
+      :amount="balanceTotal"
+      :lastAmount="500"
+      :loading="isLoading"
+    />
   </section>
 
-  <section>
+  <section :class="{ 'opacity-50': isLoading, 'transition-opacity': true }">
     <div
       v-for="(transactionOnDay, date) in transactionGroupByDate"
       :key="date"
@@ -78,7 +152,11 @@ const transactionGroupByDate = computed(() => {
         v-for="(transaction, index) in transactionOnDay"
         :key="index"
         :transaction="transaction"
+        @delete="refreshTransactions()"
       />
     </div>
+  </section>
+  <section v-if="isLoading && transactions.length === 0">
+    <USkeleton v-for="i in 3" :key="i" class="h-8 w-full rounded-md mb-2" />
   </section>
 </template>
