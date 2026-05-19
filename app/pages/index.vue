@@ -5,6 +5,7 @@ const supabase = useSupabaseClient();
 const selectedView = ref(transactionViewsItems[1]);
 const transactions = ref([]);
 const isLoading = ref(false);
+const isModalOpen = ref(false);
 // const { data, pending } = await useAsyncData("transactions", async () => {
 //   const { data, error } = await supabase.from("transactions").select().order("created_at", { ascending: false });
 //   if (error) return [];
@@ -54,32 +55,50 @@ const transactionGroupByDate = computed(() => {
   return grouped;
 });
 
-const incomeTotal = computed(() => {
-  return transactions.value
-    .filter((t) => t.type === "income")
-    .reduce((sum, t) => sum + Number(t.amount), 0); // Pastikan amount di-Number kan
+const income = computed(() => {
+  return transactions.value.filter(
+    (transaction) => transaction.type === "income",
+  );
+});
+const expense = computed(() => {
+  return transactions.value.filter(
+    (transaction) => transaction.type === "expense",
+  );
 });
 
+const incomeTotal = computed(() => {
+  return income.value.reduce((total, transaction) => {
+    return total + transaction.amount;
+  }, 0);
+});
 const expenseTotal = computed(() => {
-  return transactions.value
-    .filter((t) => t.type === "expense")
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+  return expense.value.reduce((total, transaction) => {
+    return total + transaction.amount;
+  }, 0);
 });
 
 const savingsTotal = computed(() => {
-  const thisMonth = new Date().getMonth();
-  const currentMonthTransactions = transactions.value.filter(t => {
-    return new Date(t.created_at).getMonth() === thisMonth;
-  });
-  
-  return currentMonthTransactions.reduce((acc, t) => {
-    return t.type === 'income' ? acc + Number(t.amount) : acc - Number(t.amount);
-  }, 0);
+  const now = new Date();
+  return transactions.value
+    .filter((t) => {
+      const date = new Date(t.created_at);
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+      );
+    })
+    .reduce((acc, t) => {
+      return t.type === "Income"
+        ? acc + Number(t.amount)
+        : acc - Number(t.amount);
+    }, 0);
 });
 
 const balanceTotal = computed(() => {
   return transactions.value.reduce((acc, t) => {
-    return t.type === 'income' ? acc + Number(t.amount) : acc - Number(t.amount);
+    return t.type === "income"
+      ? acc + Number(t.amount)
+      : acc - Number(t.amount);
   }, 0);
 });
 
@@ -125,6 +144,7 @@ const balanceTotal = computed(() => {
       :amount="expenseTotal"
       :lastAmount="3000"
       :loading="isLoading"
+      :color="savingsTotal < 0 ? 'text-red-500' : 'text-green-500'"
     />
     <Trend
       title="Savings"
@@ -133,11 +153,50 @@ const balanceTotal = computed(() => {
       :loading="isLoading"
     />
     <Trend
-      title="Cash on Hand"  
+      title="Cash on Hand"
       :amount="balanceTotal"
       :lastAmount="500"
       :loading="isLoading"
     />
+  </section>
+
+  <section class="flex justify-between mb-10">
+    <div>
+      <h2 class="text-2xl font-extrabold">Transactions</h2>
+      <div class="text-gray-500 dark:text-gray-400">
+        You have {{ income.length }} incomes and {{ expense.length }} expenses
+        this period.
+      </div>
+    </div>
+    <div>
+      <UButton
+        icon="i-heroicons-plus-circle"
+        color="neutral"
+        variant="outline"
+        label="Add Transaction"
+        @click="isModalOpen = true"
+      />
+      <UModal v-model:open="isModalOpen" title="Add Transaction">
+        <UCard>
+          <template #body>
+            <div class="flex items-center justify-between">
+							<h3
+								class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+							>
+								Add Transaction
+							</h3>
+							<UButton
+								color="gray"
+								variant="ghost"
+								icon="i-heroicons-x-mark-20-solid"
+								class="-my-1"
+								@click="isModalOpen = false"
+							/>
+						</div>
+          </template>
+        </UCard>
+      </UModal>
+    </div>
   </section>
 
   <section :class="{ 'opacity-50': isLoading, 'transition-opacity': true }">
