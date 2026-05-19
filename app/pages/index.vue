@@ -28,6 +28,15 @@ const {
 await refreshTransactions();
 await refreshPreviousTransactions();
 
+// Menentukan apakah kondisi keuangan sedang "Tekor" (Defisit)
+const isDeficit = computed(() => expenseTotal.value > incomeTotal.value);
+
+// Warna untuk Income & Expenses mengikuti status defisit
+const statusColor = computed(() => {
+  return isDeficit.value 
+    ? 'text-red-600 dark:text-red-400' 
+    : 'text-green-600 dark:text-green-400'
+});
 // Logika warna untuk Expenses: 
 // Merah jika pengeluaran > pendapatan, Hijau jika pengeluaran <= pendapatan
 const expenseColor = computed(() => {
@@ -54,6 +63,7 @@ const expenseColor = computed(() => {
       :amount="incomeTotal"
       :lastAmount="previousIncomeTotal"
       :loading="isLoading"
+      :color="statusColor"
     />
     <Trend
       title="Expenses"
