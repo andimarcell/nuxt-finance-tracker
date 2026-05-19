@@ -3,7 +3,7 @@ import { transactionViewsItems } from "~/utils/constants";
 
 const selectedView = ref(transactionViewsItems[1]);
 const isModalOpen = ref(false);
-
+const { current, previous } = useSelectedTimePeriod();
 const { 
   transactions, 
   isLoading, 

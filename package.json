@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxt/ui": "^4.7.1",
     "@nuxtjs/supabase": "^2.0.8",
+    "date-fns": "^4.2.1",
     "nuxt": "^4.4.5",
     "tailwindcss": "^4.3.0",
     "vue": "^3.5.34",
