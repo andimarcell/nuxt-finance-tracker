@@ -1,8 +1,12 @@
 <script setup>
-import { 
-  format, 
-  addYears, addMonths, addDays, 
-  subYears, subMonths, subDays 
+import {
+  format,
+  addYears,
+  addMonths,
+  addDays,
+  subYears,
+  subMonths,
+  subDays,
 } from "date-fns"; // TAMBAHKAN IMPORT INI
 import { transactionViewsItems } from "~/utils/constants";
 
@@ -10,6 +14,18 @@ const selectedView = ref(transactionViewsItems[1]);
 // TANGGAL ACUAN: Default-nya hari ini
 const referenceDate = ref(new Date());
 const isModalOpen = ref(false);
+const selectedTransaction = ref(null); // State untuk menyimpan transaksi yang sedang diedit
+
+const onEditClick = (transaction) => {
+  selectedTransaction.value = transaction; // Set transaksi yang akan diedit
+  isModalOpen.value = true; // Buka modal
+};
+
+const onAddClick = () => {
+  selectedTransaction.value = null; // Pastikan tidak ada transaksi yang dipilih
+  isModalOpen.value = true; // Buka modal untuk tambah transaksi baru
+};
+
 // Kirim referenceDate ke composable
 const { current, previous } = useSelectedTimePeriod(
   selectedView,
@@ -70,9 +86,9 @@ const periodLabel = computed(() => {
 // Menentukan apakah kondisi keuangan sedang "Tekor" (Defisit)
 // 1. Logika Warna Income: Merah jika pemasukan turun dibanding periode lalu
 const incomeStatusColor = computed(() => {
-  return incomeTotal.value < previousIncomeTotal.value 
-    ? 'text-red-600 dark:text-red-400' 
-    : 'text-green-600 dark:text-green-400'
+  return incomeTotal.value < previousIncomeTotal.value
+    ? "text-red-600 dark:text-red-400"
+    : "text-green-600 dark:text-green-400";
 });
 
 // 2. Logika Warna Expense: Merah jika pengeluaran naik (boros) dibanding periode lalu
@@ -80,30 +96,28 @@ const incomeStatusColor = computed(() => {
 const expenseStatusColor = computed(() => {
   const isSpendingMore = expenseTotal.value > previousExpenseTotal.value;
   const isOverBudget = expenseTotal.value > incomeTotal.value;
-  
-  return (isSpendingMore || isOverBudget)
-    ? 'text-red-600 dark:text-red-400' 
-    : 'text-green-600 dark:text-green-400'
+
+  return isSpendingMore || isOverBudget
+    ? "text-red-600 dark:text-red-400"
+    : "text-green-600 dark:text-green-400";
 });
 
 // 3. Logika Warna Savings: Merah jika tabungan berkurang atau jika minus (tekor)
 const savingsStatusColor = computed(() => {
   const isDecreasing = savingsTotal.value < previousSavingsTotal.value;
   const isNegative = savingsTotal.value < 0;
-  
-  return (isDecreasing || isNegative)
-    ? 'text-red-600 dark:text-red-400' 
-    : 'text-green-600 dark:text-green-400'
+
+  return isDecreasing || isNegative
+    ? "text-red-600 dark:text-red-400"
+    : "text-green-600 dark:text-green-400";
 });
 
 // 4. Logika Warna Cash on Hand: Merah hanya jika saldo total di database minus
 const cashColor = computed(() => {
-  return balanceTotal.value < 0 
-    ? 'text-red-600 dark:text-red-400' 
-    : 'text-green-600 dark:text-green-400'
+  return balanceTotal.value < 0
+    ? "text-red-600 dark:text-red-400"
+    : "text-green-600 dark:text-green-400";
 });
-
-
 </script>
 
 <template>
@@ -177,6 +191,7 @@ const cashColor = computed(() => {
         v-model:modelValue="isModalOpen"
         @update:modelValue="refreshTransactions"
         @saved="refreshTransactions"
+        :transaction="selectedTransaction"
       />
       <UButton
         icon="i-heroicons-plus-circle"
@@ -184,7 +199,7 @@ const cashColor = computed(() => {
         variant="outline"
         class="cursor-pointer"
         label="Add Transaction"
-        @click="isModalOpen = true"
+        @click="onAddClick"
       />
     </div>
   </section>
@@ -204,6 +219,7 @@ const cashColor = computed(() => {
         v-for="(transaction, index) in transactionOnDay"
         :key="index"
         :transaction="transaction"
+        @edit="onEditClick(transaction)"
         @delete="refreshTransactions()"
       />
     </div>

@@ -2,7 +2,7 @@
 const props = defineProps({
   transaction: Object,
 });
-const emit = defineEmits(["delete"]);
+const emit = defineEmits(["delete", "edit"]);
 
 const { currency: amount } = useCurrency(props.transaction.amount);
 
@@ -55,7 +55,9 @@ const actions = [
       label: "Edit",
       icon: "i-heroicons-pencil-square",
       class: "cursor-pointer duration-75",
-      onSelect: () => console.log("Edit"),
+      onSelect: () => {
+        emit("edit", props.transaction);
+      },
     },
     {
       label: "Delete",

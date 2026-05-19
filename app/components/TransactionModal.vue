@@ -1,17 +1,45 @@
 <script setup>
 import { format } from "date-fns";
-import { useTemplateRef } from "vue";
+import { useTemplateRef, reactive, computed, watch, ref } from "vue";
 import { z } from "zod";
 
 const formRef = useTemplateRef("form");
 const props = defineProps({
   modelValue: Boolean,
+  transaction: Object,
 });
 
 const supabase = useSupabaseClient();
 const toast = useToast();
+const isLoading = ref(false);
 
 const emit = defineEmits(["update:modelValue", "saved"]);
+
+const isModalOpen = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit("update:modelValue", value);
+  },
+});
+
+const isEditing = computed(() => !!props.transaction);
+
+const fillForm = () => {
+  if (props.transaction) {
+    state.description = props.transaction.description;
+    state.amount = props.transaction.amount;
+    state.type = props.transaction.type.toLowerCase();
+    state.created_at = props.transaction.created_at.split("T")[0]; // Format ke yyyy-MM-dd
+  } else {
+    clearForm();
+  }
+};
+
+watch(isModalOpen, (val) => {
+  if (val) fillForm();
+});
 
 const clearForm = () => {
   formRef.value?.clear(); // Menghapus pesan error validasi
@@ -22,15 +50,6 @@ const clearForm = () => {
   state.created_at = format(new Date(), "yyyy-MM-dd");
 };
 
-// 1. Logic Modal State (v-model)
-const isModalOpen = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit("update:modelValue", value);
-  },
-});
 
 // 2. Schema Validasi
 const schema = z.object({
@@ -49,20 +68,40 @@ const state = reactive({
 
 // 3. Logic Submit
 async function onSubmit(event) {
-  const { error } = await supabase.from("transactions").insert([state]);
-
-  if (error) {
-    toast.add({ title: "Error", description: error.message, color: "error", icon: "i-heroicons-exclamation-circle" });
-  } else {
-    toast.add({
+  isLoading.value = true;
+  try {
+    let error;
+    if (isEditing.value) {
+      const { error: editError } = await supabase
+      .from("transactions")
+        .update(state)
+        .eq("id", props.transaction.id);
+      error = editError;
+    } else {
+      const { error: insertError } = await supabase
+      .from("transactions")
+      .insert([state]);
+      error = insertError;
+    }
+    if (error) throw error;
+      toast.add({
       title: "Success",
-      description: "Transaction added!",
+      description: isEditing.value ? "Transaction updated!" : "Transaction added!",
       color: "success",
       icon: "i-heroicons-check-circle",
     });
-    isModalOpen.value = false; // Tutup modal
-    emit("saved"); // Panggil refresh di index.vue
-    clearForm(); // Bersihkan form setelah sukses
+
+    isModalOpen.value = false; 
+    emit("saved"); 
+  } catch (e) {
+    toast.add({
+      title: "Error",
+      description: e.message,
+      color: "error", // Gunakan 'error', bukan 'danger' untuk Nuxt UI
+      icon: "i-heroicons-x-circle",
+    });
+  } finally {
+    isLoading.value = false;
   }
 }
 </script>
