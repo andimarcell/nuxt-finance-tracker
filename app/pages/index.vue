@@ -3,7 +3,7 @@ import { transactionViewsItems } from "~/utils/constants";
 
 const selectedView = ref(transactionViewsItems[1]);
 const isModalOpen = ref(false);
-const { current, previous } = useSelectedTimePeriod();
+const { current, previous } = useSelectedTimePeriod(selectedView);
 const { 
   transactions, 
   isLoading, 
@@ -15,7 +15,7 @@ const {
   expenseTotal, 
   savingsTotal, 
   balanceTotal 
-} = useFetchTransactions();
+} = useFetchTransactions(current);
 
 await refreshTransactions();
 </script>
@@ -83,7 +83,7 @@ await refreshTransactions();
     </div>
   </section>
 
-  <section :class="{ 'opacity-50': isLoading, 'transition-opacity': true }">
+  <section :key="selectedView" :class="{ 'opacity-50': isLoading, 'transition-opacity': true, }">
     <div
       v-for="(transactionOnDay, date) in transactionGroupByDate"
       :key="date"

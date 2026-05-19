@@ -1,10 +1,11 @@
 <script setup>
+import { format } from 'date-fns'
 import { useTemplateRef } from "vue";
 import { z } from "zod";
 
 const formRef = useTemplateRef("form");
 const props = defineProps({
-    modelValue: Boolean,
+  modelValue: Boolean,
 });
 
 const supabase = useSupabaseClient();
@@ -18,7 +19,7 @@ const clearForm = () => {
   state.description = "";
   state.amount = 0;
   state.type = "Income";
-  state.created_at = new Date().toISOString().split("T")[0];
+  state.created_at = format(new Date(), 'yyyy-MM-dd');
 };
 
 // 1. Logic Modal State (v-model)
@@ -30,7 +31,6 @@ const isModalOpen = computed({
     emit("update:modelValue", value);
   },
 });
-
 
 // 2. Schema Validasi
 const schema = z.object({
@@ -44,7 +44,7 @@ const state = reactive({
   description: "",
   amount: 0,
   type: "income",
-  created_at: new Date().toISOString().split("T")[0],
+  created_at: format(new Date(), 'yyyy-MM-dd'),
 });
 
 // 3. Logic Submit
@@ -63,6 +63,8 @@ async function onSubmit(event) {
     emit("saved"); // Panggil refresh di index.vue
   }
 }
+
+
 </script>
 
 <template>
