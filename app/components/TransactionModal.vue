@@ -1,5 +1,5 @@
 <script setup>
-import { format } from 'date-fns'
+import { format } from "date-fns";
 import { useTemplateRef } from "vue";
 import { z } from "zod";
 
@@ -19,7 +19,7 @@ const clearForm = () => {
   state.description = "";
   state.amount = 0;
   state.type = "Income";
-  state.created_at = format(new Date(), 'yyyy-MM-dd');
+  state.created_at = format(new Date(), "yyyy-MM-dd");
 };
 
 // 1. Logic Modal State (v-model)
@@ -44,7 +44,7 @@ const state = reactive({
   description: "",
   amount: 0,
   type: "income",
-  created_at: format(new Date(), 'yyyy-MM-dd'),
+  created_at: format(new Date(), "yyyy-MM-dd"),
 });
 
 // 3. Logic Submit
@@ -52,19 +52,19 @@ async function onSubmit(event) {
   const { error } = await supabase.from("transactions").insert([state]);
 
   if (error) {
-    toast.add({ title: "Error", description: error.message, color: "error" });
+    toast.add({ title: "Error", description: error.message, color: "error", icon: "i-heroicons-exclamation-circle" });
   } else {
     toast.add({
       title: "Success",
       description: "Transaction added!",
       color: "success",
+      icon: "i-heroicons-check-circle",
     });
     isModalOpen.value = false; // Tutup modal
     emit("saved"); // Panggil refresh di index.vue
+    clearForm(); // Bersihkan form setelah sukses
   }
 }
-
-
 </script>
 
 <template>
