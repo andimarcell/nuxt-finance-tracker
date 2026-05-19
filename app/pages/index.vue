@@ -169,7 +169,9 @@ const balanceTotal = computed(() => {
       </div>
     </div>
     <div>
-      <TransactionModal v-model:modelValue="isModalOpen" @update:modelValue="refreshTransactions" />
+      <TransactionModal v-model:modelValue="isModalOpen" @update:modelValue="refreshTransactions" 
+      @saved="refreshTransactions"
+      />
        <UButton
         icon="i-heroicons-plus-circle"
         color="neutral"
