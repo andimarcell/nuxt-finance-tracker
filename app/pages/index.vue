@@ -6,7 +6,7 @@ const selectedView = ref(transactionViewsItems[1]);
 const transactions = ref([]);
 
 const { data, pending } = await useAsyncData("transactions", async () => {
-  const { data, error } = await supabase.from("transactions").select();
+  const { data, error } = await supabase.from("transactions").select().order("created_at", { ascending: false });
   if (error) return [];
   return data;
 });
@@ -15,8 +15,8 @@ transactions.value = data.value;
 const transactionGroupByDate = computed(() => {
   let grouped = {};
 
-  for(const transaction of transactions.value) {
-    const date = new Date(transaction.created_at).toISOString().split('T')[0]; // Ambil tanggal saja (YYYY-MM-DD)
+  for (const transaction of transactions.value) {
+    const date = new Date(transaction.created_at).toISOString().split("T")[0]; // Ambil tanggal saja (YYYY-MM-DD)
     if (!grouped[date]) {
       grouped[date] = [];
     }
@@ -67,10 +67,18 @@ const transactionGroupByDate = computed(() => {
   </section>
 
   <section>
-    <Transaction
-      v-for="(transaction, index) in transactions"
-      :key="index"
-      :transaction="transaction"
-    />
+    <div
+      v-for="(transactionOnDay, date) in transactionGroupByDate"
+      :key="date"
+      class="mb-10"
+    >
+      <TransactionDailySummary :date="date" :transaction="transactionOnDay" />
+
+      <Transaction
+        v-for="(transaction, index) in transactionOnDay"
+        :key="index"
+        :transaction="transaction"
+      />
+    </div>
   </section>
 </template>
