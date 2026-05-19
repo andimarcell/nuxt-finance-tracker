@@ -27,6 +27,15 @@ const {
 
 await refreshTransactions();
 await refreshPreviousTransactions();
+
+// Logika warna untuk Expenses: 
+// Merah jika pengeluaran > pendapatan, Hijau jika pengeluaran <= pendapatan
+const expenseColor = computed(() => {
+  return expenseTotal.value > incomeTotal.value 
+    ? 'text-red-500' 
+    : 'text-green-500'
+});
+
 </script>
 
 <template>
@@ -51,7 +60,7 @@ await refreshPreviousTransactions();
       :amount="expenseTotal"
       :lastAmount="previousExpenseTotal"
       :loading="isLoading"
-      :color="savingsTotal < 0 ? 'text-red-500' : 'text-green-500'"
+      :color="expenseColor"
     />
     <Trend
       title="Savings"

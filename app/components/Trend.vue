@@ -16,6 +16,7 @@ const icon = computed(() =>
     ? "i-heroicons:arrow-trending-up"
     : "i-heroicons:arrow-trending-down",
 );
+
 const color = computed(() =>
   trendingUp.value
     ? "text-green-600 dark:text-green-400"
@@ -35,12 +36,23 @@ const percentageTrend = computed(() => {
     return `${Math.round(ratio)}%`;
 });
 
+// LOGIKA WARNA: 
+// Jika ada prop 'color' dari parent, pakai itu. 
+// Jika tidak ada, pakai logika trending (hijau jika naik, merah jika turun).
+const trendColor = computed(() => {
+  if (props.color) return props.color; // Prioritas warna dari parent
+  
+  return trendingUp.value
+    ? "text-green-600 dark:text-green-400"
+    : "text-red-600 dark:text-red-400";
+});
+
 const { currency } = useCurrency(amount);
 </script>
 
 <template>
   <div>
-    <div class="font-bold" :class="color">{{ title }}</div>
+    <div class="font-bold" :class="trendColor">{{ title }}</div>
     <div class="text-2xl font-extrabold text-black dark:text-white mb-2">
       <USkeleton class="h-8 w-full" v-if="loading" />
       
@@ -62,7 +74,7 @@ const { currency } = useCurrency(amount);
     <div>
       <USkeleton class="h-6 w-full" v-if="loading" />
       <div v-else class="flex items-center space-x-1 text-sm">
-        <UIcon :name="icon" class="h-6 w-6" :class="color" />
+        <UIcon :name="icon" class="h-6 w-6" :class="trendColor" />
         <span class="text-gray-500 dark:text-gray-400">
           {{ percentageTrend }} from last period
         </span>

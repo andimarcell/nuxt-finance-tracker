@@ -19,15 +19,22 @@ export const useFetchTransactions = (period) => {
 
       const { data: allData, error: allTimeError } = await supabase
         .from("transactions")
-        .select("amount, type");
+        .select("amount, type"); // Kita hanya tarik kolom yang perlu saja biar cepat
 
       if (allTimeError) throw allTimeError;
       
-      // Hitung Saldo Kumulatif dari seluruh transaksi yang pernah ada
-      allTimeBalance.value = allData.reduce((acc, t) => {
-        return t.type?.toLowerCase() === "income" 
-          ? acc + Number(t.amount) 
-          : acc - Number(t.amount);
+      // DI SINI LOGIKANYA:
+      // Kita hitung dari nol, lalu iterasi semua data.
+      allTimeBalance.value = allData.reduce((acc, transaction) => {
+        const type = transaction.type?.toLowerCase();
+        const amount = Number(transaction.amount);
+
+        if (type === 'income') {
+          return acc + amount; // Kalau uang masuk, saldo bertambah
+        } else if (type === 'expense') {
+          return acc - amount; // Kalau uang keluar (expense), saldo BERKURANG
+        }
+        return acc;
       }, 0);
     } catch (error) {
       console.error("Error:", error);
