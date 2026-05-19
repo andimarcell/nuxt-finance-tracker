@@ -1,11 +1,22 @@
 <script setup>
+import { useTemplateRef } from "vue";
 import { z } from "zod";
 
+const formRef = useTemplateRef("form");
 const props = defineProps({
   modelValue: Boolean,
 });
 
 const emit = defineEmits(["update:modelValue", "saved"]);
+
+const clearForm = () => {
+  formRef.value?.clear(); // Menghapus pesan error validasi
+  // Mengembalikan state ke nilai default
+  state.description = "";
+  state.amount = 0;
+  state.type = "Income";
+  state.created_at = new Date().toISOString().split("T")[0];
+};
 
 // 1. Logic Modal State (v-model)
 const isModalOpen = computed({
@@ -64,13 +75,14 @@ async function onSubmit(event) {
     <template #body>
       <TransactionForm @submit="isModalOpen = false" />
       <UForm
+        ref="formRef"
         :schema="schema"
         :state="state"
         @submit="onSubmit"
         class="space-y-4"
       >
         <UFormField label="Description" name="description">
-          <UInput v-model="state.description" placeholder="Description"/>
+          <UInput v-model="state.description" placeholder="Description" />
         </UFormField>
 
         <UFormField label="Amount" name="amount">
@@ -89,14 +101,11 @@ async function onSubmit(event) {
           />
         </UFormField>
 
-        <div class="flex justify-end pt-4">
+        <div class="flex justify-between pt-4">
           <UButton type="submit" label="Save Transaction" />
+          <UButton variant="outline" @click="clearForm"> Clear </UButton>
         </div>
       </UForm>
-    </template>
-
-    <template #footer>
-      <!-- tombol save bisa di dalam TransactionForm biar bisa langsung submit -->
     </template>
   </UModal>
 </template>
