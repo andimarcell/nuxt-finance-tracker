@@ -2,6 +2,7 @@ export const useFetchTransactions = (period) => {
   const supabase = useSupabaseClient();
   const transactions = ref([]);
   const isLoading = ref(false);
+  const allTimeBalance = ref(0);
 
   const fetchTransactions = async () => {
     isLoading.value = true;
@@ -15,6 +16,19 @@ export const useFetchTransactions = (period) => {
 
       if (error) throw error;
       transactions.value = data || [];
+
+      const { data: allData, error: allTimeError } = await supabase
+        .from("transactions")
+        .select("amount, type");
+
+      if (allTimeError) throw allTimeError;
+      
+      // Hitung Saldo Kumulatif dari seluruh transaksi yang pernah ada
+      allTimeBalance.value = allData.reduce((acc, t) => {
+        return t.type?.toLowerCase() === "income" 
+          ? acc + Number(t.amount) 
+          : acc - Number(t.amount);
+      }, 0);
     } catch (error) {
       console.error("Error:", error);
       transactions.value = [];
@@ -38,6 +52,7 @@ export const useFetchTransactions = (period) => {
     return grouped;
   });
 
+  
   const income = computed(() => {
     // Tambahkan || [] untuk memberikan fallback array kosong
     return (transactions.value || []).filter(
@@ -54,41 +69,23 @@ export const useFetchTransactions = (period) => {
   });
 
   const incomeTotal = computed(() => {
-    return income.value.reduce((total, transaction) => {
-      return total + transaction.amount;
-    }, 0);
-  });
-  const expenseTotal = computed(() => {
-    return expense.value.reduce((total, transaction) => {
-      return total + transaction.amount;
-    }, 0);
-  });
-
-  const savingsTotal = computed(() => {
-    const now = new Date();
-    // Tambahkan ?. dan || [] agar aman
     return (transactions.value || [])
-      .filter((t) => {
-        const date = new Date(t.created_at);
-        return (
-          date.getMonth() === now.getMonth() &&
-          date.getFullYear() === now.getFullYear()
-        );
-      })
-      .reduce((acc, t) => {
-        return t.type === "income"
-          ? acc + Number(t.amount)
-          : acc - Number(t.amount);
-      }, 0);
+      .filter(t => t.type?.toLowerCase() === "income")
+      .reduce((sum, t) => sum + Number(t.amount), 0);
   });
 
-  const balanceTotal = computed(() => {
-    // Tambahkan || []
-    return (transactions.value || []).reduce((acc, t) => {
-      return t.type === "income" || t.type === "Income"
-        ? acc + Number(t.amount)
-        : acc - Number(t.amount);
-    }, 0);
+  const expenseTotal = computed(() => {
+    return (transactions.value || [])
+      .filter(t => t.type?.toLowerCase() === "expense")
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+  });
+
+ const savingsTotal = computed(() => {
+    return incomeTotal.value - expenseTotal.value;
+  });
+
+    const balanceTotal = computed(() => {
+    return allTimeBalance.value;
   });
 
   // Gunakan watch pada 'period' langsung
