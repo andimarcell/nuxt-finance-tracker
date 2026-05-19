@@ -169,33 +169,16 @@ const balanceTotal = computed(() => {
       </div>
     </div>
     <div>
-      <UButton
+      <TransactionModal v-model:modelValue="isModalOpen" @update:modelValue="refreshTransactions" />
+       <UButton
         icon="i-heroicons-plus-circle"
         color="neutral"
         variant="outline"
+        class="cursor-pointer"
         label="Add Transaction"
         @click="isModalOpen = true"
       />
-      <UModal v-model:open="isModalOpen" title="Add Transaction">
-        <UCard>
-          <template #body>
-            <div class="flex items-center justify-between">
-							<h3
-								class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
-							>
-								Add Transaction
-							</h3>
-							<UButton
-								color="gray"
-								variant="ghost"
-								icon="i-heroicons-x-mark-20-solid"
-								class="-my-1"
-								@click="isModalOpen = false"
-							/>
-						</div>
-          </template>
-        </UCard>
-      </UModal>
+      
     </div>
   </section>
 
