@@ -68,21 +68,42 @@ const periodLabel = computed(() => {
 });
 
 // Menentukan apakah kondisi keuangan sedang "Tekor" (Defisit)
-const isDeficit = computed(() => expenseTotal.value > incomeTotal.value);
+// 1. Logika Warna Income: Merah jika pemasukan turun dibanding periode lalu
+const incomeStatusColor = computed(() => {
+  return incomeTotal.value < previousIncomeTotal.value 
+    ? 'text-red-600 dark:text-red-400' 
+    : 'text-green-600 dark:text-green-400'
+});
 
-// Warna untuk Income & Expenses mengikuti status defisit
-const statusColor = computed(() => {
-  return isDeficit.value
-    ? "text-red-600 dark:text-red-400"
-    : "text-green-600 dark:text-green-400";
+// 2. Logika Warna Expense: Merah jika pengeluaran naik (boros) dibanding periode lalu
+// ATAU jika pengeluaran sudah melebihi pendapatan (defisit)
+const expenseStatusColor = computed(() => {
+  const isSpendingMore = expenseTotal.value > previousExpenseTotal.value;
+  const isOverBudget = expenseTotal.value > incomeTotal.value;
+  
+  return (isSpendingMore || isOverBudget)
+    ? 'text-red-600 dark:text-red-400' 
+    : 'text-green-600 dark:text-green-400'
 });
-// Logika warna untuk Expenses:
-// Merah jika pengeluaran > pendapatan, Hijau jika pengeluaran <= pendapatan
-const expenseColor = computed(() => {
-  return expenseTotal.value > incomeTotal.value
-    ? "text-red-500"
-    : "text-green-500";
+
+// 3. Logika Warna Savings: Merah jika tabungan berkurang atau jika minus (tekor)
+const savingsStatusColor = computed(() => {
+  const isDecreasing = savingsTotal.value < previousSavingsTotal.value;
+  const isNegative = savingsTotal.value < 0;
+  
+  return (isDecreasing || isNegative)
+    ? 'text-red-600 dark:text-red-400' 
+    : 'text-green-600 dark:text-green-400'
 });
+
+// 4. Logika Warna Cash on Hand: Merah hanya jika saldo total di database minus
+const cashColor = computed(() => {
+  return balanceTotal.value < 0 
+    ? 'text-red-600 dark:text-red-400' 
+    : 'text-green-600 dark:text-green-400'
+});
+
+
 </script>
 
 <template>
@@ -118,26 +139,28 @@ const expenseColor = computed(() => {
       :amount="incomeTotal"
       :lastAmount="previousIncomeTotal"
       :loading="isLoading"
-      :color="statusColor"
+      :color="incomeStatusColor"
     />
     <Trend
       title="Expenses"
       :amount="expenseTotal"
       :lastAmount="previousExpenseTotal"
       :loading="isLoading"
-      :color="expenseColor"
+      :color="expenseStatusColor"
     />
     <Trend
       title="Savings"
       :amount="savingsTotal"
       :lastAmount="previousSavingsTotal"
       :loading="isLoading"
+      :color="savingsStatusColor"
     />
     <Trend
       title="Cash on Hand"
       :amount="balanceTotal"
       :lastAmount="previousBalanceTotal"
       :loading="isLoading"
+      :color="cashColor"
     />
   </section>
 
