@@ -7,20 +7,41 @@ const { currency: amount } = useCurrency(props.transaction.amount);
 
 const isIncome = computed(() => props.transaction.type === "income");
 const icon = computed(() => {
-    if (isIncome.value) {
-        return "i-heroicons-arrow-up-right"
-    } else {
-        return "i-heroicons-arrow-down-left"
-    }
+  if (isIncome.value) {
+    return "i-heroicons-arrow-up-right";
+  } else {
+    return "i-heroicons-arrow-down-left";
+  }
 });
 
 const iconColor = computed(() => {
-    if (isIncome.value) {
-        return "text-green-500"
-    } else {
-        return "text-red-500"
-    }
+  if (isIncome.value) {
+    return "text-green-500";
+  } else {
+    return "text-red-500";
+  }
 });
+
+const supabase = useSupabaseClient();
+const toast = useToast();
+
+const deleteTransaction = async () => {
+  try {
+    await supabase.from("transactions").delete().eq("id", props.transaction.id);
+    toast.add({
+      title: "Transaction deleted",
+      icon: "i-heroicons-check-circle-20-solid",
+      color: "success",
+    });
+  } catch (error) {
+    console.error("Error deleting transaction:", error);
+    toast.add({
+      title: "Error",
+      icon: "i-heroicons-exclamation-triangle-20-solid",
+      color: "error",
+    });
+  }
+};
 
 const actions = [
   [
@@ -34,7 +55,7 @@ const actions = [
       label: "Delete",
       icon: "i-heroicons-trash",
       class: "cursor-pointer duration-75",
-      onSelect: () => console.log("Delete"),
+      onSelect: deleteTransaction,
     },
   ],
 ];
@@ -48,7 +69,9 @@ const actions = [
         <div>{{ transaction.description }}</div>
       </div>
       <div>
-        <UBadge color="neutral" variant="outline">{{ transaction.type }}</UBadge>
+        <UBadge color="neutral" variant="outline">{{
+          transaction.type
+        }}</UBadge>
       </div>
     </div>
     <div class="flex items-center justify-end space-x-2 mb-1">
