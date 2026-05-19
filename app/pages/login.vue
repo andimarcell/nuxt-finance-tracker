@@ -5,6 +5,14 @@ const isLoading = ref(false);
 const supabase = useSupabaseClient();
 const toast = useToast();
 
+const user = useSupabaseUser();
+
+watch(user, (user) => { 
+    if (user) {
+        return navigateTo("/"); // Redirect ke homepage jika sudah login
+    }
+}, { immediate: true } // Jalankan watch saat komponen pertama kali di-mount
+);
 // Pastikan user yang sudah login tidak bisa masuk ke halaman ini lagi
 definePageMeta({
   layout: 'default' // atau layout khusus auth jika punya
@@ -17,12 +25,17 @@ const handleLogin = async () => {
       email: email.value,
       options: {
         // Ganti dengan URL domain kamu nanti saat deploy
-        emailRedirectTo: 'http://localhost:3000/confirm', 
+        emailRedirectTo: 'http://localhost:3000/', 
       }
     });
 
     if (error) throw error;
-    
+    toast.add({
+        title: "Check your email",
+        description: `We've sent a login link to ${email.value}. Please check your inbox.`,
+        color: "success",
+        icon: "i-heroicons-check-circle"
+    })
     success.value = true;
   } catch (error) {
     toast.add({
@@ -49,7 +62,7 @@ const handleLogin = async () => {
       </template>
 
       <!-- Menggunakan UForm agar enter key otomatis submit -->
-      <form @submit.prevent="handleLogin">
+      <form @submit.prevent="handleLogin" class="space-y-4">
         <UFormField
           label="Email"
           required
@@ -62,7 +75,7 @@ const handleLogin = async () => {
             placeholder="email@contoh.com" 
             v-model="email" 
             icon="i-heroicons-envelope"
-            required
+            :loading="isLoading"
           />
         </UFormField>
 
@@ -78,7 +91,7 @@ const handleLogin = async () => {
       </form>
     </UCard>
 
-    <UCard v-else>
+    <UCard v-else class="text-center">
       <template #header>
         <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
           Email has been sent.
