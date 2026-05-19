@@ -115,7 +115,7 @@ bun run preview
 
 ## 📂 Project Structure (Nuxt 4)
 
-# app/composables/: Core logic (useFetchTransactions, useSelectedTimePeriod).
-# app/components/: Reusable UI (Trend, TransactionModal, Transaction).
-# app/utils/: Constants and shared helper functions.
-# app/pages/: Main application views.
+* app/composables/: Core logic (useFetchTransactions, useSelectedTimePeriod).
+* app/components/: Reusable UI (Trend, TransactionModal, Transaction).
+* app/utils/: Constants and shared helper functions.
+* app/pages/: Main application views.
