@@ -1,5 +1,4 @@
 <script setup>
-
 const props = defineProps({
   title: String,
   amount: Number,
@@ -24,24 +23,28 @@ const color = computed(() =>
 );
 
 const percentageTrend = computed(() => {
-  if (props.lastAmount === 0 || props.amount === 0) return '0%'; // Avoid division by zero
-  if (props.lastAmount === 0) return '100%'; // Kalau bulan lalu 0, sekarang ada isi, artinya tumbuh 100% (dari nol)
-  
-  const bigger = Math.max(props.amount, props.lastAmount);
-  const lower = Math.min(props.amount, props.lastAmount);
+  if (props.lastAmount === 0 || props.amount === 0) return "0%"; // Avoid division by zero
+  if (props.lastAmount === 0) return "100%"; // Kalau bulan lalu 0, sekarang ada isi, artinya tumbuh 100% (dari nol)
+  // Rumus Standar Finansial: ((Sekarang - Lalu) / Absolut(Lalu)) * 100
+  const step = props.amount - props.lastAmount;
+  const ratio = (step / Math.abs(props.lastAmount)) * 100;
+
+  return `${Math.round(Math.abs(ratio))}%`;
+  // const bigger = Math.max(props.amount, props.lastAmount);
+  // const lower = Math.min(props.amount, props.lastAmount);
   // Dibagi lower (karena lower adalah base pembanding untuk nyari selisih)
-  const ratio = ((bigger - lower) / lower) * 100;
+  // const ratio = ((bigger - lower) / lower) * 100;
 
   // console.log('bigger', bigger,' lower', lower,' ratio', ratio, Math.round(ratio));
-    return `${Math.round(ratio)}%`;
+  // return `${Math.round(ratio)}%`;
 });
 
-// LOGIKA WARNA: 
-// Jika ada prop 'color' dari parent, pakai itu. 
+// LOGIKA WARNA:
+// Jika ada prop 'color' dari parent, pakai itu.
 // Jika tidak ada, pakai logika trending (hijau jika naik, merah jika turun).
 const trendColor = computed(() => {
   if (props.color) return props.color; // Prioritas warna dari parent
-  
+
   return trendingUp.value
     ? "text-green-600 dark:text-green-400"
     : "text-red-600 dark:text-red-400";
@@ -55,16 +58,18 @@ const { currency } = useCurrency(amount);
     <div class="font-bold" :class="trendColor">{{ title }}</div>
     <div class="text-2xl font-extrabold text-black dark:text-white mb-2">
       <USkeleton class="h-8 w-full" v-if="loading" />
-      
+
       <!-- Kita pakai ClientOnly buat ngehindarin error merah (Hydration mismatch) -->
       <ClientOnly v-else>
         <!-- Flex items-start bikin teks sejajar di atas -->
         <div class="flex items-start">
           <span>{{ currency.main }}</span>
           <!-- sup bikin teks naik, text-sm ngecilin ukurannya -->
-          <sup class="text-sm font-semibold ml-0.5 mt-1 opacity-70">{{ currency.fraction }}</sup>
+          <sup class="text-sm font-semibold ml-0.5 mt-1 opacity-70">{{
+            currency.fraction
+          }}</sup>
         </div>
-        
+
         <!-- Tulisan Loading sementara (optional) -->
         <template #fallback>
           <USkeleton class="h-8 w-3/4" />
