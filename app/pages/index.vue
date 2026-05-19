@@ -4,20 +4,29 @@ import { transactionViewsItems } from "~/utils/constants";
 const selectedView = ref(transactionViewsItems[1]);
 const isModalOpen = ref(false);
 const { current, previous } = useSelectedTimePeriod(selectedView);
-const { 
-  transactions, 
-  isLoading, 
-  refreshTransactions, 
-  transactionGroupByDate, 
-  income, 
-  expense, 
-  incomeTotal, 
-  expenseTotal, 
-  savingsTotal, 
-  balanceTotal 
+const {
+  transactions,
+  isLoading,
+  refreshTransactions,
+  transactionGroupByDate,
+  income,
+  expense,
+  incomeTotal,
+  expenseTotal,
+  savingsTotal,
+  balanceTotal,
 } = useFetchTransactions(current);
 
+const {
+  refreshTransactions: refreshPreviousTransactions,
+  incomeTotal: previousIncomeTotal,
+  expenseTotal: previousExpenseTotal,
+  savingsTotal: previousSavingsTotal,
+  balanceTotal: previousBalanceTotal,
+} = useFetchTransactions(previous);
+
 await refreshTransactions();
+await refreshPreviousTransactions();
 </script>
 
 <template>
@@ -34,26 +43,26 @@ await refreshTransactions();
     <Trend
       title="Income"
       :amount="incomeTotal"
-      :lastAmount="500"
+      :lastAmount="previousIncomeTotal"
       :loading="isLoading"
     />
     <Trend
       title="Expenses"
       :amount="expenseTotal"
-      :lastAmount="3000"
+      :lastAmount="previousExpenseTotal"
       :loading="isLoading"
       :color="savingsTotal < 0 ? 'text-red-500' : 'text-green-500'"
     />
     <Trend
       title="Savings"
       :amount="savingsTotal"
-      :lastAmount="1500"
+      :lastAmount="previousSavingsTotal"
       :loading="isLoading"
     />
     <Trend
       title="Cash on Hand"
       :amount="balanceTotal"
-      :lastAmount="500"
+      :lastAmount="previousBalanceTotal"
       :loading="isLoading"
     />
   </section>
@@ -83,7 +92,10 @@ await refreshTransactions();
     </div>
   </section>
 
-  <section :key="selectedView" :class="{ 'opacity-50': isLoading, 'transition-opacity': true, }">
+  <section
+    :key="selectedView"
+    :class="{ 'opacity-50': isLoading, 'transition-opacity': true }"
+  >
     <div
       v-for="(transactionOnDay, date) in transactionGroupByDate"
       :key="date"
