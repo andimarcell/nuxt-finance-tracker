@@ -4,8 +4,11 @@ import { z } from "zod";
 
 const formRef = useTemplateRef("form");
 const props = defineProps({
-  modelValue: Boolean,
+    modelValue: Boolean,
 });
+
+const supabase = useSupabaseClient();
+const toast = useToast();
 
 const emit = defineEmits(["update:modelValue", "saved"]);
 
@@ -28,8 +31,6 @@ const isModalOpen = computed({
   },
 });
 
-const supabase = useSupabaseClient();
-const toast = useToast();
 
 // 2. Schema Validasi
 const schema = z.object({
