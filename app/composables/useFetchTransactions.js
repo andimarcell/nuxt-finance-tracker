@@ -1,10 +1,12 @@
 export const useFetchTransactions = (period) => {
   const supabase = useSupabaseClient();
+  const user = useSupabaseUser();
   const transactions = ref([]);
   const isLoading = ref(false);
   const allTimeBalance = ref(0);
 
   const fetchTransactions = async () => {
+    if (!user.value) return; // Pastikan user sudah login sebelum fetch data{
     isLoading.value = true;
     try {
       const { data, error } = await supabase
@@ -22,16 +24,16 @@ export const useFetchTransactions = (period) => {
         .select("amount, type"); // Kita hanya tarik kolom yang perlu saja biar cepat
 
       if (allTimeError) throw allTimeError;
-      
+
       // DI SINI LOGIKANYA:
       // Kita hitung dari nol, lalu iterasi semua data.
       allTimeBalance.value = allData.reduce((acc, transaction) => {
         const type = transaction.type?.toLowerCase();
         const amount = Number(transaction.amount);
 
-        if (type === 'income') {
+        if (type === "income") {
           return acc + amount; // Kalau uang masuk, saldo bertambah
-        } else if (type === 'expense') {
+        } else if (type === "expense") {
           return acc - amount; // Kalau uang keluar (expense), saldo BERKURANG
         }
         return acc;
@@ -44,12 +46,20 @@ export const useFetchTransactions = (period) => {
     }
   };
   // transactions.value = await fetchTransactions();
+  watch([period, user], () => {
+    if (user.value) {
+      fetchTransactions();
+    } else {
+      transactions.value = []; // Reset transaksi jika user logout
+      allTimeBalance.value = 0;
+    }
+  }, { immediate: true, deep: true });
 
   const refreshTransactions = async () => {
-    transactions.value = await fetchTransactions();
-  };
+    await fetchTransactions();
+  }
 
-   const transactionGroupByDate = computed(() => {
+  const transactionGroupByDate = computed(() => {
     let grouped = {};
     for (const transaction of transactions.value) {
       const date = new Date(transaction.created_at).toISOString().split("T")[0];
@@ -59,7 +69,6 @@ export const useFetchTransactions = (period) => {
     return grouped;
   });
 
-  
   const income = computed(() => {
     // Tambahkan || [] untuk memberikan fallback array kosong
     return (transactions.value || []).filter(
@@ -77,26 +86,27 @@ export const useFetchTransactions = (period) => {
 
   const incomeTotal = computed(() => {
     return (transactions.value || [])
-      .filter(t => t.type?.toLowerCase() === "income")
+      .filter((t) => t.type?.toLowerCase() === "income")
       .reduce((sum, t) => sum + Number(t.amount), 0);
   });
 
   const expenseTotal = computed(() => {
     return (transactions.value || [])
-      .filter(t => t.type?.toLowerCase() === "expense")
+      .filter((t) => t.type?.toLowerCase() === "expense")
       .reduce((sum, t) => sum + Number(t.amount), 0);
   });
 
- const savingsTotal = computed(() => {
+  const savingsTotal = computed(() => {
     return incomeTotal.value - expenseTotal.value;
   });
 
-    const balanceTotal = computed(() => {
+  const balanceTotal = computed(() => {
     return allTimeBalance.value;
   });
 
   // Gunakan watch pada 'period' langsung
-  watch(period, () => fetchTransactions(), { immediate: true, deep: true });
+
+
   return {
     transactions,
     isLoading,

@@ -25,7 +25,7 @@ const handleLogin = async () => {
       email: email.value,
       options: {
         // Ganti dengan URL domain kamu nanti saat deploy
-        emailRedirectTo: 'http://localhost:3000/', 
+        emailRedirectTo: 'http://localhost:3000/confirm', 
       }
     });
 

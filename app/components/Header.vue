@@ -2,10 +2,85 @@
 const user = useSupabaseUser();
 const supabase = useSupabaseClient();
 
+const localAvatarStyle = ref(
+  user.value?.user_metadata?.avatar_style || "initials",
+);
+
+const updateAvatarStyle = async (style) => {
+  localAvatarStyle.value = style; // Langsung update UI tanpa nunggu loading
+
+  // Simpan secara permanen ke database Auth Supabase
+  await supabase.auth.updateUser({
+    data: { avatar_style: style },
+  });
+};
+
+const avatarProps = computed(() => {
+  if (localAvatarStyle.value === "icon") {
+    return {
+      icon: "i-heroicons-user",
+      class: "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400",
+    };
+  } else {
+    const email = user.value?.email || "User";
+    return {
+      src: `https://ui-avatars.com/api/?name=${encodeURIComponent(email)}&background=random&color=fff&bold=true`,
+    };
+  }
+});
+
+const dropdownItems = computed(() => [
+  [
+    {
+      label: "Akun",
+      slot: "account", // Kita buat custom slot untuk nampilin email
+      disabled: true,
+    },
+  ],
+  [
+    {
+      label: "Pakai Icon Bawaan",
+      icon: "i-heroicons-user",
+      disabled: localAvatarStyle.value === "icon", // Disable tombol jika sudah terpilih
+      onSelect: () => updateAvatarStyle("icon"),
+    },
+    {
+      label: "Pakai Inisial Email",
+      icon: "i-heroicons-envelope",
+      disabled: localAvatarStyle.value === "initials", // Disable tombol jika sudah terpilih
+      onSelect: () => updateAvatarStyle("initials"),
+    },
+  ],
+  [
+    {
+      label: "Logout",
+      icon: "i-heroicons-arrow-left-on-rectangle",
+      onSelect: logout,
+    },
+  ],
+]);
+
+const avatarUrl = computed(() => {
+  if (!user.value) return null;
+
+  // 1. Jika user punya foto asli (misal nanti kamu tambah fitur login Google), pakai foto asli
+  if (user.value.user_metadata?.avatar_url) {
+    return user.value.user_metadata.avatar_url;
+  }
+
+  // 2. Jika tidak ada foto (Magic Link), generate warna unik berdasarkan email!
+  const email = user.value.email || "User";
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(email)}&background=random&color=fff&bold=true`;
+});
+
 // Fungsi untuk logout
 const logout = async () => {
   await supabase.auth.signOut();
-  navigateTo("/login"); // Redirect ke halaman login setelah logout
+  // Bersihkan semua data hasil fetch (termasuk useAsyncData jika ada)
+  clearNuxtData();
+
+  // Redirect ke halaman login
+  navigateTo("/login", { replace: true });
 };
 </script>
 
@@ -14,22 +89,25 @@ const logout = async () => {
     <NuxtLink to="/" class="text-2xl font-bold"> FTracker</NuxtLink>
     <ClientOnly>
       <div v-if="user" class="flex items-center space-x-4">
-        <UDropdownMenu
-          :items="[
-            [
-              {
-                label: 'Logout',
-                icon: 'i-heroicons-arrow-left-on-rectangle',
-                onSelect: logout,
-              },
-            ],
-          ]"
-        >
+        <UDropdownMenu :items="dropdownItems">
           <UAvatar
-            :src="user.user_metadata?.avatar_url"
+            v-bind="avatarProps"
             :alt="user.email"
             class="cursor-pointer"
           />
+          <!-- Slot khusus untuk menampilkan email user di dropdown -->
+          <template #account>
+            <div class="text-left">
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                Signed in as
+              </p>
+              <p
+                class="text-sm font-medium text-gray-900 dark:text-white truncate"
+              >
+                {{ user.email }}
+              </p>
+            </div>
+          </template>
         </UDropdownMenu>
       </div>
       <div v-else>
