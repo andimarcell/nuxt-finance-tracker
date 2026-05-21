@@ -10,6 +10,7 @@ const props = defineProps({
 });
 
 const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 const toast = useToast();
 const isLoading = ref(false);
 
@@ -46,7 +47,7 @@ const clearForm = () => {
   // Mengembalikan state ke nilai default
   state.description = "";
   state.amount = 0;
-  state.type = "Income";
+  state.type = "income";
   state.created_at = format(new Date(), "yyyy-MM-dd");
 };
 
@@ -71,6 +72,7 @@ async function onSubmit(event) {
   isLoading.value = true;
   try {
     let error;
+    
     if (isEditing.value) {
       const { error: editError } = await supabase
       .from("transactions")
