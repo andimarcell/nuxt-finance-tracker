@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // Jika user sudah login tapi mencoba akses halaman login atau confirm
   if (
     user.value &&
-    (to.path === "/login" || to.path === "/confirm" || to.path === "/")
+    (to.path === "/login" || to.path === "/confirm")
   ) {
     return navigateTo("/dashboard");
   }

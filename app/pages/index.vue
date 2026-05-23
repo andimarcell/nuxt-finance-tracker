@@ -1,4 +1,6 @@
 <script setup>
+// mengambil state user aktif
+const user = useSupabaseUser();
 // Halaman ini tidak butuh logic apa-apa, murni UI
 definePageMeta({
   layout: "default",
@@ -7,7 +9,19 @@ definePageMeta({
 useSeoMeta({
   ogImage: '/preview-dashboard.png',
 })
+
+// SOLUSI AMAN: Hitung tujuan URL & teks tombol secara dinamis lewat computed di <script>
+const ctaDestination = computed(() => {
+  return user.value ? '/dashboard' : '/login';
+});
+
+const ctaLabel = computed(() => {
+  return user.value ? 'Masuk ke Dasbor' : 'Mulai Sekarang';
+});
+
 </script>
+
+
 
 <template>
   <div
@@ -19,7 +33,7 @@ useSeoMeta({
       variant="subtle"
       class="mb-6 rounded-full px-3 py-1"
     >
-      v1.0 - Skripsi Edition
+      v1.0 - Edisi Skripsi
     </UBadge>
 
     <!-- Headline Utama -->
@@ -42,13 +56,13 @@ useSeoMeta({
     <!-- Call to Action (CTA) Button -->
     <div class="flex flex-col sm:flex-row items-center gap-4">
       <UButton
-        to="/login"
+        :to="ctaDestination"
         size="xl"
         color="primary"
         class="px-8 py-3 rounded-full font-bold shadow-lg shadow-primary/30"
-        trailing-icon="i-heroicons-arrow-right-20-solid"
+        :trailing-icon="user ? 'i-heroicons-arrow-right-20-solid' : 'i-heroicons-sparkles'"
       >
-        Mulai Sekarang Gratis
+        {{ ctaLabel }}
       </UButton>
     </div>
 
