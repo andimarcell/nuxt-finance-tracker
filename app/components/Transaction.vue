@@ -87,7 +87,7 @@ const actions = [
     </div>
 
     <!-- bagian kanan nominal & actions -->
-    <div class="flex items-center justify-end space-x-2 mb-1 shrink-0">
+    <div class="flex items-center justify-end space-x-2 mb-1 md:mb-2 shrink-0">
       <!-- Flex items-start bikin teks sejajar di atas -->
       <div class="flex items-start">
         <span class="text-sm sm:text-md">{{ amount.main }}</span>
