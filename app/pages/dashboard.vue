@@ -194,7 +194,7 @@ const cashColor = computed(() => {
         pada periode ini.
       </div>
     </div>
-    <div class="w-full sm:w-auto">
+    <div class="w-full sm:w-auto mt-4 sm:mt-0 flex justify-center sm:justify-end">
       <TransactionModal
         v-model:modelValue="isModalOpen"
         @update:modelValue="refreshTransactions"
@@ -207,7 +207,7 @@ const cashColor = computed(() => {
         icon="i-heroicons-plus-circle"
         color="neutral"
         variant="outline"
-        class="cursor-pointer w-full sm:w-auto justify-center"
+        class="cursor-pointer"
         label="Tambah Transaksi"
         @click="onAddClick"
       />
