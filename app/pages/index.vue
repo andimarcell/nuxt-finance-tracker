@@ -46,10 +46,7 @@ definePageMeta({
       </div>
       <!-- Body Mockup -->
       <div class="bg-white dark:bg-gray-950 aspect-video flex flex-col items-center justify-center relative p-8">
-          <UIcon name="i-heroicons-chart-pie" class="w-24 h-24 text-gray-200 dark:text-gray-800 mb-4" />
-          <p class="text-gray-400 dark:text-gray-600 font-medium text-lg md:text-xl">
-            Tampilan Dasbor Interaktif FTracker
-          </p>
+          <img src="" alt="Preview Dashboard FTracker" class="w-full h-full object-cover object-top opacity-90 hover:opacity-100 transition-opacity duration-300"/>
       </div>
     </div>
   </div>
