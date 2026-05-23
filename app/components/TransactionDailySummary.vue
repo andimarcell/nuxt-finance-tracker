@@ -6,7 +6,7 @@ const props = defineProps({
 
 const total = computed(() => {
   let total = 0;
-  for(const transaction of props.transaction) {
+  for (const transaction of props.transaction) {
     if (transaction.type === "income") {
       total += transaction.amount;
     } else {
@@ -20,9 +20,11 @@ const { currency: amount } = useCurrency(total);
 </script>
 
 <template>
-  <div class="grid grid-cols-2 space-y-2 border-b border-gray-600 py-2 mt-2 dark:border-gray-800 dark:text-gray-400 text-gray-500 font-semibold">
+  <div
+    class="grid grid-cols-2 space-y-2 border-b border-gray-600 py-2 mt-2 dark:border-gray-800 dark:text-gray-400 text-gray-500 font-semibold"
+  >
     <div class="flex items-center justify-between">
-    {{ date }}
+      {{ date }}
     </div>
     <div class="flex items-center justify-end mb-1">
       <!-- Flex items-start bikin teks sejajar di atas -->

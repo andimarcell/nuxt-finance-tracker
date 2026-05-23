@@ -73,16 +73,23 @@ const actions = [
 </script>
 
 <template>
-  <div class="grid grid-cols-2 space-y-2 border-b border-gray-800 py-3 mt-2 ">
+  <div class="grid grid-cols-2 space-y-2 border-b border-gray-800 py-3 mt-2">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-2 truncate">
         <UIcon :name="icon" :class="[iconColor, 'shrink-0']" />
-        <div class="truncate text-sm sm:text-base">{{ transaction.description }}</div>
+        <div class="truncate text-sm sm:text-base">
+          {{ transaction.description }}
+        </div>
       </div>
       <div class="shrink-0">
-        <UBadge color="neutral" variant="outline" class="text-[10px] sm:text-xs">{{
-          transaction.type === 'income' ? 'Pemasukan' : 'Pengeluaran'
-        }}</UBadge>
+        <UBadge
+          color="neutral"
+          variant="outline"
+          class="text-[10px] sm:text-xs"
+          >{{
+            transaction.type === "income" ? "Pemasukan" : "Pengeluaran"
+          }}</UBadge
+        >
       </div>
     </div>
 
@@ -92,9 +99,10 @@ const actions = [
       <div class="flex items-start">
         <span class="text-sm sm:text-md">{{ amount.main }}</span>
         <!-- sup bikin teks naik, text-sm ngecilin ukurannya -->
-        <sup class="text-[0.65rem] sm:text-[0,75rem] font-semibold ml-0.5 mt-2 sm:mt-3 opacity-70">{{
-          amount.fraction
-        }}</sup>
+        <sup
+          class="text-[0.65rem] sm:text-[0,75rem] font-semibold ml-0.5 mt-2 sm:mt-3 opacity-70"
+          >{{ amount.fraction }}</sup
+        >
       </div>
       <div>
         <UDropdownMenu

@@ -207,7 +207,7 @@ const cashColor = computed(() => {
         icon="i-heroicons-plus-circle"
         color="neutral"
         variant="outline"
-        class="cursor-pointer"
+        class="cursor-pointer sm:w-auto justify-center"
         label="Tambah Transaksi"
         @click="onAddClick"
       />

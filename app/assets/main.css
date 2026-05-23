@@ -2,11 +2,11 @@
 @import "@nuxt/ui";
 
 @theme {
-    --font-sans: 'Inter', sans-serif;
+  --font-sans: "Inter", sans-serif;
 }
 
 @layer base {
-    body {
-        @apply bg-white dark:bg-gray-900;
-    }
+  body {
+    @apply bg-white dark:bg-gray-900;
+  }
 }

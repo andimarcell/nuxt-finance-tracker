@@ -163,7 +163,10 @@ async function onSubmit(event) {
         class="space-y-4"
       >
         <UFormField label="Keterangan" name="description">
-          <UInput v-model="state.description" placeholder="Masukkan keterangan..." />
+          <UInput
+            v-model="state.description"
+            placeholder="Masukkan keterangan..."
+          />
         </UFormField>
 
         <UFormField label="Nominal" name="amount">
@@ -186,9 +189,12 @@ async function onSubmit(event) {
         </UFormField>
 
         <UFormField label="Jenis Transaksi" name="type">
-          <USelect v-model="state.type" :items="transactionTypes"
-          option-attribute="label"
-          value-attribute="value" />
+          <USelect
+            v-model="state.type"
+            :items="transactionTypes"
+            option-attribute="label"
+            value-attribute="value"
+          />
         </UFormField>
 
         <UFormField label="Tanggal" name="created_at">

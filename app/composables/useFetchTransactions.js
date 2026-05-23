@@ -46,18 +46,22 @@ export const useFetchTransactions = (period) => {
     }
   };
   // transactions.value = await fetchTransactions();
-  watch([period, user], () => {
-    if (user.value) {
-      fetchTransactions();
-    } else {
-      transactions.value = []; // Reset transaksi jika user logout
-      allTimeBalance.value = 0;
-    }
-  }, { immediate: true, deep: true });
+  watch(
+    [period, user],
+    () => {
+      if (user.value) {
+        fetchTransactions();
+      } else {
+        transactions.value = []; // Reset transaksi jika user logout
+        allTimeBalance.value = 0;
+      }
+    },
+    { immediate: true, deep: true },
+  );
 
   const refreshTransactions = async () => {
     await fetchTransactions();
-  }
+  };
 
   const transactionGroupByDate = computed(() => {
     let grouped = {};
@@ -105,7 +109,6 @@ export const useFetchTransactions = (period) => {
   });
 
   // Gunakan watch pada 'period' langsung
-
 
   return {
     transactions,

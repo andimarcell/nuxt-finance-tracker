@@ -55,8 +55,12 @@ const { currency } = useCurrency(amount);
 
 <template>
   <div>
-    <div class="font-bold text-sm sm:text-base" :class="trendColor">{{ title }}</div>
-    <div class="text-xl sm:text-2xl font-extrabold text-black dark:text-white mb-2 truncate">
+    <div class="font-bold text-sm sm:text-base" :class="trendColor">
+      {{ title }}
+    </div>
+    <div
+      class="text-xl sm:text-2xl font-extrabold text-black dark:text-white mb-2 truncate"
+    >
       <USkeleton class="h-8 w-full" v-if="loading" />
 
       <!-- Kita pakai ClientOnly buat ngehindarin error merah (Hydration mismatch) -->
@@ -65,9 +69,10 @@ const { currency } = useCurrency(amount);
         <div class="flex items-start">
           <span>{{ currency.main }}</span>
           <!-- sup bikin teks naik, text-sm ngecilin ukurannya -->
-          <sup class="text-xs sm:text-sm font-semibold ml-0.5 mt-1 opacity-70">{{
-            currency.fraction
-          }}</sup>
+          <sup
+            class="text-xs sm:text-sm font-semibold ml-0.5 mt-1 opacity-70"
+            >{{ currency.fraction }}</sup
+          >
         </div>
 
         <!-- Tulisan Loading sementara (optional) -->
