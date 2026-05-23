@@ -1,6 +1,7 @@
 <script setup>
 const user = useSupabaseUser();
 const supabase = useSupabaseClient();
+const route = useRoute();
 
 const localAvatarStyle = ref(
   user.value?.user_metadata?.avatar_style || "initials",
@@ -110,7 +111,7 @@ const logout = async () => {
           </template>
         </UDropdownMenu>
       </div>
-      <div v-else>
+      <div v-else-if="route.path !== '/login' && route.path !== '/confirm'">
         <UButton
           to="/login"
           variant="ghost"
