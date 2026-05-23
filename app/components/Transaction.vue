@@ -1,10 +1,13 @@
 <script setup>
+import { computed } from "vue";
+
 const props = defineProps({
   transaction: Object,
 });
 const emit = defineEmits(["delete", "edit"]);
 
-const { currency: amount } = useCurrency(props.transaction.amount);
+const amountComputed = computed(() => props.transaction.amount);
+const { currency: amount } = useCurrency(amountComputed);
 
 const isIncome = computed(() => props.transaction.type === "income");
 const icon = computed(() => {
