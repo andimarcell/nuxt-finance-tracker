@@ -121,18 +121,23 @@ const cashColor = computed(() => {
 </script>
 
 <template>
-  <section class="flex items-center justify-between mb-10">
-    <h1 class="text-4xl font-extrabold">Summary</h1>
-    <div>
-      <div class="flex items-center space-x-2 mt-2">
+  <!-- bagian header numpuk di hp, sejejer di laptop -->
+  <section
+    class="flex flex-col items-center sm:flex-row sm:items-center justify-between mb-8 sm:mb-10 gap-4"
+  >
+    <h1 class="text-3xl sm:text-4xl font-extrabold">Summary</h1>
+
+    <div class="flex items-center justify-between sm:justify-start">
+      <div class="flex items-center space-x-2">
         <UButton
           icon="i-heroicons-chevron-left"
           variant="ghost"
           @click="prevPeriod"
         />
-        <span class="font-bold text-lg min-w-32 text-center">{{
-          periodLabel
-        }}</span>
+        <span
+          class="font-bold text-base sm:text-lg min-w-25 sm:min-w-32 text-center"
+          >{{ periodLabel }}</span
+        >
         <UButton
           icon="i-heroicons-chevron-right"
           variant="ghost"
@@ -140,13 +145,15 @@ const cashColor = computed(() => {
         />
       </div>
     </div>
-    <div>
+
+    <div class="mt-2 sm:mt-0">
       <USelectMenu v-model="selectedView" :items="transactionViewsItems" />
     </div>
   </section>
 
+  <!-- bagian trend -->
   <section
-    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-16 mb-10 gap-8"
+    class="grid text-sm grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-16 mb-10 gap-8 ml-1 sm:ml-0"
   >
     <Trend
       title="Income"
@@ -178,15 +185,16 @@ const cashColor = computed(() => {
     />
   </section>
 
-  <section class="flex justify-between mb-10">
+  <!-- bagian header transaction-->
+  <section class="flex flex-col sm:flex-row ml-1 sm:ml-0 justify-between mb-6 sm:mb-10 gap-2">
     <div>
-      <h2 class="text-2xl font-extrabold">Transactions</h2>
-      <div class="text-gray-500 dark:text-gray-400">
+      <h2 class="text-xl sm:text-2xl font-extrabold">Transactions</h2>
+      <div class="text-sm sm:text-base text-gray-500 dark:text-gray-400">
         You have {{ income.length }} incomes and {{ expense.length }} expenses
         this period.
       </div>
     </div>
-    <div>
+    <div class="w-full sm:w-auto">
       <TransactionModal
         v-model:modelValue="isModalOpen"
         @update:modelValue="refreshTransactions"
@@ -194,17 +202,19 @@ const cashColor = computed(() => {
         :transaction="selectedTransaction"
         :currentBalance="balanceTotal"
       />
+      <!-- tombol add jadi full width di hp -->
       <UButton
         icon="i-heroicons-plus-circle"
         color="neutral"
         variant="outline"
-        class="cursor-pointer"
+        class="cursor-pointer w-full sm:w-auto justify-center"
         label="Add Transaction"
         @click="onAddClick"
       />
     </div>
   </section>
 
+  <!-- bagian list transaksi-->
   <section
     :key="selectedView"
     :class="{ 'opacity-50': isLoading, 'transition-opacity': true }"
