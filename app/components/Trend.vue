@@ -55,8 +55,8 @@ const { currency } = useCurrency(amount);
 
 <template>
   <div>
-    <div class="font-bold" :class="trendColor">{{ title }}</div>
-    <div class="text-2xl font-extrabold text-black dark:text-white mb-2">
+    <div class="font-bold text-sm sm:text-base" :class="trendColor">{{ title }}</div>
+    <div class="text-xl sm:text-2xl font-extrabold text-black dark:text-white mb-2 truncate">
       <USkeleton class="h-8 w-full" v-if="loading" />
 
       <!-- Kita pakai ClientOnly buat ngehindarin error merah (Hydration mismatch) -->
@@ -65,7 +65,7 @@ const { currency } = useCurrency(amount);
         <div class="flex items-start">
           <span>{{ currency.main }}</span>
           <!-- sup bikin teks naik, text-sm ngecilin ukurannya -->
-          <sup class="text-sm font-semibold ml-0.5 mt-1 opacity-70">{{
+          <sup class="text-xs sm:text-sm font-semibold ml-0.5 mt-1 opacity-70">{{
             currency.fraction
           }}</sup>
         </div>
@@ -80,7 +80,7 @@ const { currency } = useCurrency(amount);
       <USkeleton class="h-6 w-full" v-if="loading" />
       <div v-else class="flex items-center space-x-1 text-sm">
         <UIcon :name="icon" class="h-6 w-6" :class="trendColor" />
-        <span class="text-gray-500 dark:text-gray-400">
+        <span class="text-gray-500 dark:text-gray-400 truncate">
           {{ percentageTrend }} from last period
         </span>
       </div>
