@@ -87,7 +87,9 @@ const logout = async () => {
 
 <template>
   <header class="flex items-center justify-between mt-10">
-    <NuxtLink to="/" class="text-2xl font-bold"> FTracker</NuxtLink>
+    
+    <NuxtLink to="/" class="flex items-center gap-2 hove:opacity-80 transition">
+      <img src="/favicon.ico" class="w-8 h-8 rounded-md" /><span class="text-2xl font-bold">FTracker</span></NuxtLink>
     <ClientOnly>
       <div v-if="user" class="flex items-center space-x-4">
         <UDropdownMenu :items="dropdownItems">

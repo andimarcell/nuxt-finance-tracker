@@ -3,6 +3,10 @@
 definePageMeta({
   layout: "default",
 });
+
+useSeoMeta({
+  ogImage: '/preview-dashboard.png',
+})
 </script>
 
 <template>
@@ -62,10 +66,10 @@ definePageMeta({
       </div>
       <!-- Body Mockup -->
       <div
-        class="bg-white dark:bg-gray-950 aspect-video flex flex-col items-center justify-center relative p-8"
+        class="bg-white dark:bg-gray-950 aspect-video flex flex-col items-center justify-center relative "
       >
         <img
-          src=""
+          src="/preview-dashboard.png"
           alt="Preview Dashboard FTracker"
           class="w-full h-full object-cover object-top opacity-90 hover:opacity-100 transition-opacity duration-300"
         />
