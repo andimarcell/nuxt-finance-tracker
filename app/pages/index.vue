@@ -147,7 +147,7 @@ const cashColor = computed(() => {
     </div>
 
     <div class="mt-2 sm:mt-0">
-      <USelectMenu v-model="selectedView" :items="transactionViewsItems" />
+      <USelect v-model="selectedView" :items="transactionViewsItems" />
     </div>
   </section>
 
