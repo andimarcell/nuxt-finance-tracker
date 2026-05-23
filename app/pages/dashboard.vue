@@ -125,7 +125,7 @@ const cashColor = computed(() => {
   <section
     class="flex flex-col items-center sm:flex-row sm:items-center justify-between mb-8 sm:mb-10 gap-4"
   >
-    <h1 class="text-3xl sm:text-4xl font-extrabold">Summary</h1>
+    <h1 class="text-3xl sm:text-4xl font-extrabold">Ringkasan</h1>
 
     <div class="flex items-center justify-between sm:justify-start">
       <div class="flex items-center space-x-2">
@@ -156,28 +156,28 @@ const cashColor = computed(() => {
     class="grid text-sm grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-16 mb-10 gap-8 ml-1 sm:ml-0"
   >
     <Trend
-      title="Income"
+      title="Pemasukan"
       :amount="incomeTotal"
       :lastAmount="previousIncomeTotal"
       :loading="isLoading"
       :color="incomeStatusColor"
     />
     <Trend
-      title="Expenses"
+      title="Pengeluaran"
       :amount="expenseTotal"
       :lastAmount="previousExpenseTotal"
       :loading="isLoading"
       :color="expenseStatusColor"
     />
     <Trend
-      title="Savings"
+      title="Tabungan"
       :amount="savingsTotal"
       :lastAmount="previousSavingsTotal"
       :loading="isLoading"
       :color="savingsStatusColor"
     />
     <Trend
-      title="Cash on Hand"
+      title="Total Saldo"
       :amount="balanceTotal"
       :lastAmount="previousBalanceTotal"
       :loading="isLoading"
@@ -188,10 +188,10 @@ const cashColor = computed(() => {
   <!-- bagian header transaction-->
   <section class="flex flex-col sm:flex-row ml-1 sm:ml-0 justify-between mb-6 sm:mb-10 gap-2">
     <div>
-      <h2 class="text-xl sm:text-2xl font-extrabold">Transactions</h2>
+      <h2 class="text-xl sm:text-2xl font-extrabold">Transaksi</h2>
       <div class="text-sm sm:text-base text-gray-500 dark:text-gray-400">
-        You have {{ income.length }} incomes and {{ expense.length }} expenses
-        this period.
+        Terdapat {{ income.length }} pemasukan dan {{ expense.length }} pengeluaran
+        pada periode ini.
       </div>
     </div>
     <div class="w-full sm:w-auto">
@@ -208,7 +208,7 @@ const cashColor = computed(() => {
         color="neutral"
         variant="outline"
         class="cursor-pointer w-full sm:w-auto justify-center"
-        label="Add Transaction"
+        label="Tambah Transaksi"
         @click="onAddClick"
       />
     </div>

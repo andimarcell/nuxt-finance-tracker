@@ -2,6 +2,7 @@
 import { format } from "date-fns";
 import { useTemplateRef, reactive, computed, watch, ref } from "vue";
 import { z } from "zod";
+import { transactionTypes } from "~/utils/constants";
 
 const formRef = useTemplateRef("form");
 const props = defineProps({
@@ -85,10 +86,10 @@ const clearForm = () => {
 
 // Schema Validasi
 const schema = z.object({
-  description: z.string().min(1, "Description is required"),
-  amount: z.number().positive("Amount must be positive"),
+  description: z.string().min(1, "Keterangan wajib diisi"),
+  amount: z.number().positive("Nominal harus lebih dari 0"),
   type: z.enum(["income", "expense"]),
-  created_at: z.string().min(1, "Date is required"),
+  created_at: z.string().min(1, "Tanggal wajib diisi"),
 });
 
 const state = reactive({
@@ -121,10 +122,10 @@ async function onSubmit(event) {
     }
     if (error) throw error;
     toast.add({
-      title: "Success",
+      title: "Sukses",
       description: isEditing.value
-        ? "Transaction updated!"
-        : "Transaction added!",
+        ? "Transaksi berhasil diperbarui!"
+        : "Transaksi berhasil ditambahkan!",
       color: "success",
       icon: "i-heroicons-check-circle",
     });
@@ -161,11 +162,11 @@ async function onSubmit(event) {
         @submit="onSubmit"
         class="space-y-4"
       >
-        <UFormField label="Description" name="description">
-          <UInput v-model="state.description" placeholder="Description" />
+        <UFormField label="Keterangan" name="description">
+          <UInput v-model="state.description" placeholder="Masukkan keterangan..." />
         </UFormField>
 
-        <UFormField label="Amount" name="amount">
+        <UFormField label="Nominal" name="amount">
           <UInput v-model.number="state.amount" type="number" />
 
           <!-- peringatan over budget muncul secara reaktif-->
@@ -184,11 +185,13 @@ async function onSubmit(event) {
           </div>
         </UFormField>
 
-        <UFormField label="Type" name="type">
-          <USelect v-model="state.type" :items="['income', 'expense']" />
+        <UFormField label="Jenis Transaksi" name="type">
+          <USelect v-model="state.type" :items="transactionTypes"
+          option-attribute="label"
+          value-attribute="value" />
         </UFormField>
 
-        <UFormField label="Date" name="created_at">
+        <UFormField label="Tanggal" name="created_at">
           <UInput
             v-model="state.created_at"
             type="date"
@@ -200,11 +203,11 @@ async function onSubmit(event) {
           <!-- Tombol save akan mati (disabled) jika isOverBudget bernilai true-->
           <UButton
             type="submit"
-            :label="isOverBudget ? 'Over Budget' : 'Save Transaction'"
+            :label="isOverBudget ? 'Saldo Tidak Cukup' : 'Simpan Transaksi'"
             :disabled="isOverBudget"
             :color="isOverBudget ? 'red' : 'primary'"
           />
-          <UButton variant="outline" @click="clearForm"> Clear </UButton>
+          <UButton variant="outline" @click="clearForm"> Bersihkan </UButton>
         </div>
       </UForm>
     </template>

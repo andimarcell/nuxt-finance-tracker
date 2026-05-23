@@ -35,7 +35,7 @@ const deleteTransaction = async () => {
   try {
     await supabase.from("transactions").delete().eq("id", props.transaction.id);
     toast.add({
-      title: "Transaction deleted",
+      title: "Transaksi berhasil dihapus!",
       icon: "i-heroicons-check-circle-20-solid",
       color: "success",
     });
@@ -55,7 +55,7 @@ const deleteTransaction = async () => {
 const actions = [
   [
     {
-      label: "Edit",
+      label: "Ubah",
       icon: "i-heroicons-pencil-square",
       class: "cursor-pointer duration-75",
       onSelect: () => {
@@ -63,7 +63,7 @@ const actions = [
       },
     },
     {
-      label: "Delete",
+      label: "Hapus",
       icon: "i-heroicons-trash",
       class: "cursor-pointer duration-75",
       onSelect: deleteTransaction,
@@ -81,7 +81,7 @@ const actions = [
       </div>
       <div class="shrink-0">
         <UBadge color="neutral" variant="outline" class="text-[10px] sm:text-xs">{{
-          transaction.type
+          transaction.type === 'income' ? 'Pemasukan' : 'Pengeluaran'
         }}</UBadge>
       </div>
     </div>

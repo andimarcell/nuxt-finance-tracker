@@ -81,7 +81,7 @@ const { currency } = useCurrency(amount);
       <div v-else class="flex items-center space-x-1 text-sm">
         <UIcon :name="icon" class="h-6 w-6" :class="trendColor" />
         <span class="text-gray-500 dark:text-gray-400 truncate">
-          {{ percentageTrend }} from last period
+          {{ percentageTrend }} dari periode lalu
         </span>
       </div>
     </div>
