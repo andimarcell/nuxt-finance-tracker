@@ -7,6 +7,10 @@ const formRef = useTemplateRef("form");
 const props = defineProps({
   modelValue: Boolean,
   transaction: Object,
+  currentBalance: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const supabase = useSupabaseClient();
@@ -27,6 +31,34 @@ const isModalOpen = computed({
 
 const isEditing = computed(() => !!props.transaction);
 
+// Logic menghitung saldo Yang bisa dipakai
+const availableBalance = computed(() => {
+  let available = props.currentBalance;
+
+  // jika sedang meng-edit sebuah "pengeluaran", kita kembalikan dulu
+  // nominal lamanya ke saldo saat ini agar kalkukasinya adil (fair).
+  if (isEditing.value && props.transaction?.type?.toLowerCase() === "expense") {
+    available += props.transaction.amount;
+  }
+  return available;
+});
+
+// logika validasi apakah over budget?
+const isOverBudget = computed(() => {
+  // pemasukan (income) tidak pernah over budget
+  if (state.type !== "expense") return false;
+  // jika pengeluaran lebih besar dari saldo yang tersedia = True (over budget)
+  return state.amount > availableBalance.value;
+});
+
+// Forma rupiah khusus untuk teks peringatan
+const formattedAvailableBalance = computed(() => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(availableBalance.value);
+});
 const fillForm = () => {
   if (props.transaction) {
     state.description = props.transaction.description;
@@ -51,8 +83,7 @@ const clearForm = () => {
   state.created_at = format(new Date(), "yyyy-MM-dd");
 };
 
-
-// 2. Schema Validasi
+// Schema Validasi
 const schema = z.object({
   description: z.string().min(1, "Description is required"),
   amount: z.number().positive("Amount must be positive"),
@@ -67,34 +98,39 @@ const state = reactive({
   created_at: format(new Date(), "yyyy-MM-dd"),
 });
 
-// 3. Logic Submit
+// Logic Submit
 async function onSubmit(event) {
+  // kemanan ganda jangan eksekusi jika over budget
+  if (isOverBudget.value) return;
+
   isLoading.value = true;
   try {
     let error;
-    
+
     if (isEditing.value) {
       const { error: editError } = await supabase
-      .from("transactions")
+        .from("transactions")
         .update(state)
         .eq("id", props.transaction.id);
       error = editError;
     } else {
       const { error: insertError } = await supabase
-      .from("transactions")
-      .insert([state]);
+        .from("transactions")
+        .insert([state]);
       error = insertError;
     }
     if (error) throw error;
-      toast.add({
+    toast.add({
       title: "Success",
-      description: isEditing.value ? "Transaction updated!" : "Transaction added!",
+      description: isEditing.value
+        ? "Transaction updated!"
+        : "Transaction added!",
       color: "success",
       icon: "i-heroicons-check-circle",
     });
 
-    isModalOpen.value = false; 
-    emit("saved"); 
+    isModalOpen.value = false;
+    emit("saved");
   } catch (e) {
     toast.add({
       title: "Error",
@@ -131,6 +167,21 @@ async function onSubmit(event) {
 
         <UFormField label="Amount" name="amount">
           <UInput v-model.number="state.amount" type="number" />
+
+          <!-- peringatan over budget muncul secara reaktif-->
+          <div
+            v-if="isOverBudget"
+            class="flex items-start gap-1 mt-2 text-red-500 dark:text-red-400 text-sm font-medium"
+          >
+            <UIcon
+              name="i-heroicons-exclamation-triangle"
+              class="w-5 h-5 shrink-0"
+            />
+            <p>
+              Saldo tidak mencukupi! Sisa saldo yang bisa Anda gunakan hanya
+              <strong>{{ formattedAvailableBalance }}</strong>
+            </p>
+          </div>
         </UFormField>
 
         <UFormField label="Type" name="type">
@@ -146,7 +197,13 @@ async function onSubmit(event) {
         </UFormField>
 
         <div class="flex justify-between pt-4">
-          <UButton type="submit" label="Save Transaction" />
+          <!-- Tombol save akan mati (disabled) jika isOverBudget bernilai true-->
+          <UButton
+            type="submit"
+            :label="isOverBudget ? 'Over Budget' : 'Save Transaction'"
+            :disabled="isOverBudget"
+            :color="isOverBudget ? 'red' : 'primary'"
+          />
           <UButton variant="outline" @click="clearForm"> Clear </UButton>
         </div>
       </UForm>

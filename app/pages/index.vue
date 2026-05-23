@@ -57,28 +57,28 @@ await refreshPreviousTransactions();
 
 // Fungsi untuk navigasi
 const nextPeriod = () => {
-  if (selectedView.value === "yearly")
+  if (selectedView.value === "tahunan")
     referenceDate.value = addYears(referenceDate.value, 1);
-  if (selectedView.value === "monthly")
+  if (selectedView.value === "bulanan")
     referenceDate.value = addMonths(referenceDate.value, 1);
-  if (selectedView.value === "daily")
+  if (selectedView.value === "harian")
     referenceDate.value = addDays(referenceDate.value, 1);
 };
 
 const prevPeriod = () => {
-  if (selectedView.value === "yearly")
+  if (selectedView.value === "tahunan")
     referenceDate.value = subYears(referenceDate.value, 1);
-  if (selectedView.value === "monthly")
+  if (selectedView.value === "bulanan")
     referenceDate.value = subMonths(referenceDate.value, 1);
-  if (selectedView.value === "daily")
+  if (selectedView.value === "harian")
     referenceDate.value = subDays(referenceDate.value, 1);
 };
 
 // Judul dinamis untuk navigasi (Misal: "May 2026" atau "2025")
 const periodLabel = computed(() => {
-  if (selectedView.value === "yearly")
+  if (selectedView.value === "tahunan")
     return format(referenceDate.value, "yyyy");
-  if (selectedView.value === "monthly")
+  if (selectedView.value === "bulanan")
     return format(referenceDate.value, "MMMM yyyy");
   return format(referenceDate.value, "d MMMM yyyy");
 });
@@ -192,6 +192,7 @@ const cashColor = computed(() => {
         @update:modelValue="refreshTransactions"
         @saved="refreshTransactions"
         :transaction="selectedTransaction"
+        :currentBalance="balanceTotal"
       />
       <UButton
         icon="i-heroicons-plus-circle"

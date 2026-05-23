@@ -14,11 +14,11 @@ export const useSelectedTimePeriod = (period, selectedDate) => {
         const date = selectedDate.value; 
 
         switch (period.value) {
-            case 'yearly':
+            case 'tahunan':
                 return { start: startOfYear(date), end: endOfYear(date) }
-            case 'monthly':
+            case 'bulanan':
                 return { start: startOfMonth(date), end: endOfMonth(date) }
-            case 'daily':
+            case 'harian':
                 return { start: startOfDay(date), end: endOfDay(date) }
         }
     });
@@ -44,17 +44,17 @@ export const useSelectedTimePeriod = (period, selectedDate) => {
     const previous = computed(() => {
         const date = selectedDate.value;
         switch (period.value) {
-            case 'yearly':
+            case 'tahunan':
                 return {
                     start: startOfYear(sub(date, { years: 1 })), // startOfYear(new Date()),
                     end: endOfYear(sub(date, { years: 1 })), // endOfYear(new Date()),   
                 }
-                case 'monthly':
+                case 'bulanan':
                     return {
                         start: startOfMonth(sub(date, { months: 1 })), // startOfMonth(new Date()),
                         end: endOfMonth(sub(date, { months: 1 })), // endOfMonth(new Date()),
                     }
-                    case 'daily':
+                    case 'harian':
                     return {
                         start: startOfDay(sub(date, { days: 1 })),
                         // startOfDay(new Date()),
