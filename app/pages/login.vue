@@ -11,7 +11,7 @@ watch(
   user,
   (user) => {
     if (user) {
-      return navigateTo("/"); // Redirect ke homepage jika sudah login
+      return navigateTo("/dashboard"); // Redirect ke homepage jika sudah login
     }
   },
   { immediate: true }, // Jalankan watch saat komponen pertama kali di-mount

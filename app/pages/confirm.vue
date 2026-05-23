@@ -5,7 +5,7 @@ const user = useSupabaseUser();
 // 'user' akan terisi, dan kita langsung tendang ke index (/)
 watch(user, () => {
   if (user.value) {
-    navigateTo('/', { replace: true });
+    navigateTo('/dashboard', { replace: true });
   }
 }, { immediate: true });
 </script>
