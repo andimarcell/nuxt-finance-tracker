@@ -24,20 +24,20 @@ useSeoMeta({
   title: 'FTracker - Lacak Keuanganmu Lebih Cerdas',
   description: 'FTracker membantu Anda mencatat pemasukan, mengawasi pengeluaran, dan mengontrol sisa saldo secara otomatis agar Anda bisa menabung dengan lebih baik.',
   
-  // Menggunakan preview-mobile.jpg (Format .jpg didukung penuh & ukuran file sangat ringan)
+  // KEMBALI MENGGUNAKAN LANDSCAPE (Sangat disukai WhatsApp & Meta)
   ogTitle: 'FTracker - Lacak Keuanganmu Lebih Cerdas',
   ogDescription: 'Kelola dan awasi pengeluaran harian Anda secara otomatis menggunakan sistem analisis keuangan cerdas dan responsif.',
-  ogImage: `${siteUrl}/preview-mobile.jpg`, 
-  ogImageWidth: 300,
-  ogImageHeight: 600,
+  ogImage: `${siteUrl}/preview-laptop.png`, 
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
   ogType: 'website',
   ogUrl: siteUrl,
   
   // Twitter Card
-  twitterCard: 'summary',
+  twitterCard: 'summary_large_image',
   twitterTitle: 'FTracker - Lacak Keuanganmu Lebih Cerdas',
   twitterDescription: 'Kelola dan awasi pengeluaran harian Anda secara otomatis.',
-  twitterImage: `${siteUrl}/preview-mobile.jpg`,
+  twitterImage: `${siteUrl}/preview-laptop.png`,
 })
 </script>
 
