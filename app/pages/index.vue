@@ -83,7 +83,7 @@ const ctaLabel = computed(() => {
         class="bg-white dark:bg-gray-950 aspect-video flex flex-col items-center justify-center relative "
       >
         <img
-          src="/preview-dashboard.png"
+          src="/preview-dashboard-baru.png"
           alt="Preview Dashboard FTracker"
           class="w-full h-full object-cover object-top opacity-90 hover:opacity-100 transition-opacity duration-300"
         />
