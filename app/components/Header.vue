@@ -88,10 +88,10 @@ const logout = async () => {
 <template>
   <header class="flex items-center justify-between mt-10">
     <!-- klik logo/nama otomatis mengarah ke halaman ("/") -->
-    <NuxtLink to="/" class="flex items-center gap-2 hove:opacity-80 transition">
-      <img src="/favicon.ico" class="w-8 h-8 rounded-md" /><span class="text-2xl font-bold">FTracker</span></NuxtLink>
+    <NuxtLink to="/" class="flex items-center gap-1.5 sm:gap-2 hove:opacity-80 transition shrink-0">
+      <img src="/favicon.ico" class="w-6 h-6 sm:w-8 sm:h-8 rounded-md" /><span class="text-2xl font-bold">FTracker</span></NuxtLink>
     <ClientOnly>
-      <div v-if="user" class="flex items-center space-x-4">
+      <div v-if="user" class="flex items-center gap-2 sm:gap-4">
         <!-- tombol dinamis: hanya muncul jika user sudah login, tapi sedang tidak berada di halaman /dashboard-->
          <UButton
          v-if="route.path !== '/dashboard'"
@@ -99,8 +99,10 @@ const logout = async () => {
          variant="solid"
          label="Ke Dashboard"
          icon="i-heroicons-arrow-right-on-rectangle"
-         class="cursor-pointer font-bold"
-         />
+         class="cursor-pointer font-bold shrink-0 text-xs sm:text-sm"
+         >
+        <span class="hidden sm:inline">Ke Dashboard </span>
+        </UButton>
         <UDropdownMenu :items="dropdownItems">
           <UAvatar
             v-bind="avatarProps"
