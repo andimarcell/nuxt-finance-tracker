@@ -149,7 +149,7 @@ async function onSubmit(event) {
   <UModal
     scrollable
     v-model:open="isModalOpen"
-    title="Form Transaction"
+    title="Formulir Transaksi"
     :dismissible="false"
     :close="{ color: 'neutral', variant: 'ghost', class: 'cursor-pointer' }"
   >
