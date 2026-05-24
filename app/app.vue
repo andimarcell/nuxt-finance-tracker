@@ -28,7 +28,7 @@ useSeoMeta({
   // Open Graph Facebook / WhatsApp / Telegram
   ogTitle: 'FTracker - Lacak Keuanganmu Lebih Cerdas',
   ogDescription: 'Kelola dan awasi pengeluaran harian Anda secara otomatis menggunakan sistem analisis keuangan cerdas dan responsif.',
-  ogImage: `${siteUrl}/preview-laptop.png`, // Menggunakan gambar laptop mockup yang mewah sebagai preview
+  ogImage: `${siteUrl}/favicon.ico`, // Menggunakan gambar laptop mockup yang mewah sebagai preview
   ogImageWidth: 1200,
   ogImageHeight: 630,
   ogType: 'website',
@@ -38,7 +38,7 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
   twitterTitle: 'FTracker - Lacak Keuanganmu Lebih Cerdas',
   twitterDescription: 'Kelola dan awasi pengeluaran harian Anda secara otomatis.',
-  twitterImage: `${siteUrl}/preview-laptop.png`,
+  twitterImage: `${siteUrl}/favicon.ico`,
 })
 </script>
 
