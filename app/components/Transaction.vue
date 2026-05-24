@@ -92,7 +92,7 @@ const actions = [
                - Di HP: Bisa patah baris (break-words).
                - Di Laptop: Dipotong jika sangat panjang agar rapi (sm:truncate sm:max-w-[180px] md:max-w-[240px]).
           -->
-          <div class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white break-words sm:truncate sm:max-w-[180px] md:max-w-[240px]">
+          <div class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white wrap-break-word sm:truncate sm:max-w-45 md:max-w-60">
             {{ transaction.description }}
           </div>
           
