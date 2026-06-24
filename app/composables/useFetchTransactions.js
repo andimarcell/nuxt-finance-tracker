@@ -21,10 +21,13 @@ export const useFetchTransactions = (period) => {
 
       const { data: allData, error: allTimeError } = await supabase
         .from("transactions")
-        .select("amount, type"); // Kita hanya tarik kolom yang perlu saja biar cepat
-
+        .select("amount, type") // Kita hanya tarik kolom yang perlu saja biar cepat
+        .lte("created_at", period.value.end.toISOString()); // Dibatasi sampai akhir periode terpilih
       if (allTimeError) throw allTimeError;
-
+      console.log(
+        `[${period.value.end.toISOString().split("T")[0]}] Total Data Terbaca:`,
+        allData.length,
+      );
       // DI SINI LOGIKANYA:
       // Kita hitung dari nol, lalu iterasi semua data.
       allTimeBalance.value = allData.reduce((acc, transaction) => {

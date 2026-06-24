@@ -52,6 +52,14 @@ const {
   balanceTotal: previousBalanceTotal,
 } = useFetchTransactions(previous);
 
+// Fungsi untuk memperbarui semua data
+const refreshAll = async () => {
+  await Promise.all([
+    refreshTransactions(),
+    refreshPreviousTransactions()
+  ]);
+};
+
 await refreshTransactions();
 await refreshPreviousTransactions();
 
@@ -197,8 +205,8 @@ const cashColor = computed(() => {
     <div class="w-full sm:w-auto mt-4 sm:mt-0 flex justify-center sm:justify-end">
       <TransactionModal
         v-model:modelValue="isModalOpen"
-        @update:modelValue="refreshTransactions"
-        @saved="refreshTransactions"
+        @update:modelValue="refreshAll"
+        @saved="refreshAll"
         :transaction="selectedTransaction"
         :currentBalance="balanceTotal"
       />
@@ -231,7 +239,7 @@ const cashColor = computed(() => {
         :key="index"
         :transaction="transaction"
         @edit="onEditClick(transaction)"
-        @delete="refreshTransactions()"
+        @delete="refreshAll()"
       />
     </div>
   </section>

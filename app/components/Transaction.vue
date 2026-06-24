@@ -77,29 +77,46 @@ const actions = [
        - Di HP: Menggunakan Flexbox biasa (flex justify-between) agar layout samping kiri-kanan nempel rapi.
        - Di Laptop: Menggunakan Grid 2 Kolom (sm:grid sm:grid-cols-2) agar lurus vertikal di tengah.
   -->
-  <div class="border-b border-gray-100 dark:border-gray-800 py-3.5 mt-1 flex sm:grid sm:grid-cols-2 items-center justify-between sm:justify-stretch gap-4">
-    
+  <div
+    class="border-b border-gray-100 dark:border-gray-800 py-3.5 mt-1 flex sm:grid sm:grid-cols-2 items-center justify-between sm:justify-stretch gap-4"
+  >
     <!-- ======================================================== -->
     <!-- SISI KIRI (Kolom 1 di Desktop [50%], Flex-Row di Mobile) -->
     <!-- ======================================================== -->
-    <div class="flex items-start sm:items-center justify-between min-w-0 flex-1 sm:flex-none">
+    <div
+      class="flex items-start sm:items-center justify-between min-w-0 flex-1 sm:flex-none"
+    >
       <div class="flex items-start sm:items-center space-x-3 min-w-0 flex-1">
         <!-- Ikon: Menempel di atas pada HP (items-start), di tengah pada Laptop (sm:items-center) -->
-        <UIcon :name="icon" :class="[iconColor, 'shrink-0 mt-0.5 sm:mt-0 w-5 h-5']" />
-        
+        <UIcon
+          :name="icon"
+          :class="[iconColor, 'shrink-0 mt-0.5 sm:mt-0 w-5 h-5']"
+        />
+
         <div class="flex flex-col min-w-0">
           <!-- Deskripsi:
                - Di HP: Bisa patah baris (break-words).
                - Di Laptop: Dipotong jika sangat panjang agar rapi (sm:truncate sm:max-w-[180px] md:max-w-[240px]).
           -->
-          <div class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white wrap-break-word sm:truncate sm:max-w-45 md:max-w-60">
-            {{ transaction.description }}
-          </div>
-          
+          <UTooltip
+            :text="transaction.description"
+            :content="{ side: 'top', align: 'center' }"
+          >
+            <div
+              class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white wrap-break-word sm:truncate sm:max-w-64 md:max-w-md cursor-help"
+            >
+              {{ transaction.description }}
+            </div>
+          </UTooltip>
+
           <!-- Badge Khusus HP (Muncul di bawah deskripsi) -->
           <div class="mt-1 block sm:hidden">
-            <UBadge color="neutral" variant="outline" class="text-[9px] px-1.5 py-0.5 font-medium rounded-md">
-              {{ transaction.type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}
+            <UBadge
+              color="neutral"
+              variant="outline"
+              class="text-[9px] px-1.5 py-0.5 font-medium rounded-md"
+            >
+              {{ transaction.type === "income" ? "Pemasukan" : "Pengeluaran" }}
             </UBadge>
           </div>
         </div>
@@ -109,12 +126,12 @@ const actions = [
            - Muncul di paling kanan Kolom 1 (Sehingga berada pas di TENGAH-TENGAH BARIS [50% mark])
       -->
       <div class="hidden sm:block shrink-0 ml-4">
-        <UBadge 
-          color="neutral" 
-          variant="outline" 
+        <UBadge
+          color="neutral"
+          variant="outline"
           class="text-[10px] sm:text-xs px-2 py-0.5 font-medium rounded-md"
         >
-          {{ transaction.type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}
+          {{ transaction.type === "income" ? "Pemasukan" : "Pengeluaran" }}
         </UBadge>
       </div>
     </div>
@@ -124,14 +141,18 @@ const actions = [
     <!-- ======================================================== -->
     <div class="flex items-center justify-end space-x-2 shrink-0 sm:w-full">
       <div class="flex items-start text-right">
-        <span class="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white">
+        <span
+          class="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white"
+        >
           {{ amount.main }}
         </span>
-        <sup class="text-[0.65rem] sm:text-[0.75rem] font-bold ml-0.5 mt-0.5 sm:mt-1 opacity-70 text-gray-500 dark:text-gray-400">
+        <sup
+          class="text-[0.65rem] sm:text-[0.75rem] font-bold ml-0.5 mt-0.5 sm:mt-1 opacity-70 text-gray-500 dark:text-gray-400"
+        >
           {{ amount.fraction }}
         </sup>
       </div>
-      
+
       <div>
         <UDropdownMenu
           :items="actions"
@@ -148,6 +169,5 @@ const actions = [
         </UDropdownMenu>
       </div>
     </div>
-
   </div>
 </template>

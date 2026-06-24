@@ -28,6 +28,11 @@ const percentageTrend = computed(() => {
   // Rumus Standar Finansial: ((Sekarang - Lalu) / Absolut(Lalu)) * 100
   const step = props.amount - props.lastAmount;
   const ratio = (step / Math.abs(props.lastAmount)) * 100;
+  const absRatio = Math.abs(ratio);
+  
+  if (absRatio > 0 && absRatio < 1) {
+    return `${absRatio.toFixed(2)}%`; // Menampilkan 2 angka di belakang koma
+  }
 
   return `${Math.round(Math.abs(ratio))}%`;
   // const bigger = Math.max(props.amount, props.lastAmount);
@@ -59,7 +64,7 @@ const { currency } = useCurrency(amount);
       {{ title }}
     </div>
     <div
-      class="text-xl sm:text-2xl font-extrabold text-black dark:text-white mb-2 truncate"
+      class="text-xl sm:text-2xl font-extrabold text-black dark:text-white mb-2"
     >
       <USkeleton class="h-8 w-full" v-if="loading" />
 

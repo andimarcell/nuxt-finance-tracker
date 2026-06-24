@@ -1,10 +1,12 @@
 <script setup>
 import { format } from "date-fns";
-import { useTemplateRef, reactive, computed, watch, ref } from "vue";
+import { useTemplateRef, reactive, computed, watch, ref, nextTick } from "vue";
 import { z } from "zod";
 import { transactionTypes } from "~/utils/constants";
 
 const formRef = useTemplateRef("form");
+const textareaRef = ref(null); // Ref untuk mengakses elemen textarea asli
+
 const props = defineProps({
   modelValue: Boolean,
   transaction: Object,
@@ -32,12 +34,18 @@ const isModalOpen = computed({
 
 const isEditing = computed(() => !!props.transaction);
 
+// Fungsi cerdas untuk memperbesar tinggi textarea otomatis sesuai jumlah baris ketikan
+const autoResize = () => {
+  const el = textareaRef.value;
+  if (!el) return;
+  el.style.height = "auto"; // Reset tinggi terlebih dahulu
+  el.style.height = el.scrollHeight + "px"; // Set tinggi sesuai tinggi konten di dalamnya
+};
+
 // Logic menghitung saldo Yang bisa dipakai
 const availableBalance = computed(() => {
   let available = props.currentBalance;
 
-  // jika sedang meng-edit sebuah "pengeluaran", kita kembalikan dulu
-  // nominal lamanya ke saldo saat ini agar kalkukasinya adil (fair).
   if (isEditing.value && props.transaction?.type?.toLowerCase() === "expense") {
     available += props.transaction.amount;
   }
@@ -46,9 +54,7 @@ const availableBalance = computed(() => {
 
 // logika validasi apakah over budget?
 const isOverBudget = computed(() => {
-  // pemasukan (income) tidak pernah over budget
   if (state.type !== "expense") return false;
-  // jika pengeluaran lebih besar dari saldo yang tersedia = True (over budget)
   return state.amount > availableBalance.value;
 });
 
@@ -60,6 +66,7 @@ const formattedAvailableBalance = computed(() => {
     minimumFractionDigits: 0,
   }).format(availableBalance.value);
 });
+
 const fillForm = () => {
   if (props.transaction) {
     state.description = props.transaction.description;
@@ -71,17 +78,28 @@ const fillForm = () => {
   }
 };
 
+// Pantau perubahan modal terbuka
 watch(isModalOpen, (val) => {
-  if (val) fillForm();
+  if (val) {
+    fillForm();
+    // Tunggu komponen dirender penuh (nextTick), lalu sesuaikan tinggi textarea
+    nextTick(() => {
+      autoResize();
+    });
+  }
 });
 
 const clearForm = () => {
   formRef.value?.clear(); // Menghapus pesan error validasi
-  // Mengembalikan state ke nilai default
   state.description = "";
   state.amount = 0;
   state.type = "income";
   state.created_at = format(new Date(), "yyyy-MM-dd");
+
+  // Kembalikan tinggi textarea ke tinggi semula (1 baris) setelah dibersihkan
+  nextTick(() => {
+    autoResize();
+  });
 };
 
 // Schema Validasi
@@ -101,7 +119,6 @@ const state = reactive({
 
 // Logic Submit
 async function onSubmit(event) {
-  // kemanan ganda jangan eksekusi jika over budget
   if (isOverBudget.value) return;
 
   isLoading.value = true;
@@ -136,7 +153,7 @@ async function onSubmit(event) {
     toast.add({
       title: "Error",
       description: e.message,
-      color: "error", // Gunakan 'error', bukan 'danger' untuk Nuxt UI
+      color: "error",
       icon: "i-heroicons-x-circle",
     });
   } finally {
@@ -162,11 +179,21 @@ async function onSubmit(event) {
         @submit="onSubmit"
         class="space-y-4"
       >
-        <UFormField label="Keterangan" name="description">
-          <UInput
+        <UFormField label="Keterangan" name="description" v-slot="{ error }">
+          <!-- MENGGUNAKAN TEXTAREA RESPONSIF: Tanpa scrollbar & tanpa resize-handle -->
+          <textarea
+            ref="textareaRef"
             v-model="state.description"
             placeholder="Masukkan keterangan..."
-          />
+            rows="1"
+            @input="autoResize"
+            :class="[
+              'relative block w-full resize-none overflow-hidden focus:outline-none rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-3 py-2 border bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-150',
+              error
+                ? 'ring-1 ring-red-400 dark:ring-red-400 border-red-400 dark:border-red-400'
+                : 'focus:ring-2 focus:ring-primary-400 dark:focus:ring-primary-400 border-gray-300 dark:border-gray-700',
+            ]"
+          ></textarea>
         </UFormField>
 
         <UFormField label="Nominal" name="amount">
