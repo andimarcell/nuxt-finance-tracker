@@ -23,28 +23,32 @@ const color = computed(() =>
     : "text-red-600 dark:text-red-400",
 );
 
-// LOGIKA STATUS KUALITATIF (BAIK / BURUK) REKOMENDASI DOSEN
+// LOGIKA STATUS KUALITATIF (OPTIMAL / PERLU EVALUASI) 
 const trendStatusText = computed(() => {
-  // Jika tidak ada perubahan atau data awal kosong, tidak perlu memunculkan status
-  if (props.lastAmount === 0 || props.amount === 0) return "";
-  const step = props.amount - props.lastAmount;
-  if (step === 0) return "";
+  // Jika persentasenya 0% (tidak ada kenaikan atau penurunan), tampilkan status "(Stabil)"
+  if (percentageTrend.value === "0%") {
+    return "(Stabil)";
+  }
 
+  const step = props.amount - props.lastAmount;
   const isUp = step > 0;
   const lowerTitle = props.title?.toLowerCase();
 
   if (lowerTitle === "pengeluaran") {
-    // Pengeluaran: Naik = Buruk, Turun = Baik (Hemat)
+    // Pengeluaran: Naik = Buruk, Turun = Baik
     return isUp ? "(Perlu Evaluasi)" : "(Optimal)";
   } else {
-    // Pemasukan, Tabungan, Total Saldo: Naik = Baik, Turun = Buruk
+    // Pemasukan, Tabungan, Total Saldo: Naik = Optimal, Turun = Perlu Evaluasi
     return isUp ? "(Optimal)" : "(Perlu Evaluasi)";
   }
 });
 
-// LOGIKA WARNA STATUS TEKS (BAIK = HIJAU, BURUK = MERAH)
+// LOGIKA WARNA STATUS TEKS (OPTIMAL = HIJAU, PERLU EVALUASI = MERAH)
 const statusTextColor = computed(() => {
   if (!trendStatusText.value) return "";
+  if (trendStatusText.value === "(Stabil)") {
+    return "text-gray-400 dark:text-gray-500"; // Menambahkan warna abu-abu netral
+  }
   return trendStatusText.value === "(Optimal)"
     ? "text-green-600 dark:text-green-400"
     : "text-red-600 dark:text-red-400";
