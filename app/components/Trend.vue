@@ -16,37 +16,57 @@ const icon = computed(() =>
     : "i-heroicons:arrow-trending-down",
 );
 
+// LOGIKA UTAMA WARNA TREN
 const color = computed(() =>
   trendingUp.value
     ? "text-green-600 dark:text-green-400"
     : "text-red-600 dark:text-red-400",
 );
 
+// LOGIKA STATUS KUALITATIF (BAIK / BURUK) REKOMENDASI DOSEN
+const trendStatusText = computed(() => {
+  // Jika tidak ada perubahan atau data awal kosong, tidak perlu memunculkan status
+  if (props.lastAmount === 0 || props.amount === 0) return "";
+  const step = props.amount - props.lastAmount;
+  if (step === 0) return "";
+
+  const isUp = step > 0;
+  const lowerTitle = props.title?.toLowerCase();
+
+  if (lowerTitle === "pengeluaran") {
+    // Pengeluaran: Naik = Buruk, Turun = Baik (Hemat)
+    return isUp ? "(Buruk)" : "(Baik)";
+  } else {
+    // Pemasukan, Tabungan, Total Saldo: Naik = Baik, Turun = Buruk
+    return isUp ? "(Baik)" : "(Buruk)";
+  }
+});
+
+// LOGIKA WARNA STATUS TEKS (BAIK = HIJAU, BURUK = MERAH)
+const statusTextColor = computed(() => {
+  if (!trendStatusText.value) return "";
+  return trendStatusText.value === "(Baik)"
+    ? "text-green-600 dark:text-green-400"
+    : "text-red-600 dark:text-red-400";
+});
+
 const percentageTrend = computed(() => {
   if (props.lastAmount === 0 || props.amount === 0) return "0%"; // Avoid division by zero
   if (props.lastAmount === 0) return "100%"; // Kalau bulan lalu 0, sekarang ada isi, artinya tumbuh 100% (dari nol)
-  // Rumus Standar Finansial: ((Sekarang - Lalu) / Absolut(Lalu)) * 100
+  
   const step = props.amount - props.lastAmount;
   const ratio = (step / Math.abs(props.lastAmount)) * 100;
   const absRatio = Math.abs(ratio);
-  
+
+  // OPTIMASI PRESISI: Jika perubahan di bawah 1% tapi tidak 0, tampilkan desimal (misal: 0.43%)
   if (absRatio > 0 && absRatio < 1) {
     return `${absRatio.toFixed(2)}%`; // Menampilkan 2 angka di belakang koma
   }
 
-  return `${Math.round(Math.abs(ratio))}%`;
-  // const bigger = Math.max(props.amount, props.lastAmount);
-  // const lower = Math.min(props.amount, props.lastAmount);
-  // Dibagi lower (karena lower adalah base pembanding untuk nyari selisih)
-  // const ratio = ((bigger - lower) / lower) * 100;
-
-  // console.log('bigger', bigger,' lower', lower,' ratio', ratio, Math.round(ratio));
-  // return `${Math.round(ratio)}%`;
+  return `${Math.round(absRatio)}%`;
 });
 
-// LOGIKA WARNA:
-// Jika ada prop 'color' dari parent, pakai itu.
-// Jika tidak ada, pakai logika trending (hijau jika naik, merah jika turun).
+// LOGIKA WARNA KARTU
 const trendColor = computed(() => {
   if (props.color) return props.color; // Prioritas warna dari parent
 
@@ -90,8 +110,13 @@ const { currency } = useCurrency(amount);
       <USkeleton class="h-6 w-full" v-if="loading" />
       <div v-else class="flex items-center space-x-1 text-sm">
         <UIcon :name="icon" class="h-6 w-6" :class="trendColor" />
-        <span class="text-gray-500 dark:text-gray-400 truncate">
+        <span class="text-gray-500 dark:text-gray-400">
           {{ percentageTrend }} dari periode lalu
+          
+          <!-- PENAMBAHAN STATUS TEKS DARI DOSEN (BAIK/BURUK) -->
+          <span v-if="trendStatusText" class="font-bold ml-1" :class="statusTextColor">
+            {{ trendStatusText }}
+          </span>
         </span>
       </div>
     </div>

@@ -193,7 +193,7 @@ async function onSubmit(event) {
                 ? 'ring-1 ring-red-400 dark:ring-red-400 border-red-400 dark:border-red-400'
                 : 'focus:ring-2 focus:ring-primary-400 dark:focus:ring-primary-400 border-gray-300 dark:border-gray-700',
             ]"
-          ></textarea>
+          ></textarea>  
         </UFormField>
 
         <UFormField label="Nominal" name="amount">
