@@ -25,20 +25,28 @@ const color = computed(() =>
 
 // LOGIKA STATUS KUALITATIF (OPTIMAL / PERLU EVALUASI) 
 const trendStatusText = computed(() => {
-  // Jika persentasenya 0% (tidak ada kenaikan atau penurunan), tampilkan status "(Stabil)"
+  // 1. KONDISI STABIL (0%): Berlaku untuk SEMUA kartu termasuk Pemasukan!
   if (percentageTrend.value === "0%") {
     return "(Stabil)";
   }
 
-  const step = props.amount - props.lastAmount;
-  const isUp = step > 0;
   const lowerTitle = props.title?.toLowerCase();
+  
+  // 2. KONDISI PERUBAHAN (Naik/Turun): Pemasukan dinonaktifkan dari penilaian kualitatif
+  if (lowerTitle === "pemasukan" || lowerTitle === "income") {
+    return "";
+  }
+
+  const step = props.amount - props.lastAmount;
+  if (step === 0) return "(Stabil)";
+
+  const isUp = step > 0;
 
   if (lowerTitle === "pengeluaran") {
-    // Pengeluaran: Naik = Buruk, Turun = Baik
+    // Pengeluaran: Naik = Perlu Evaluasi, Turun = Optimal
     return isUp ? "(Perlu Evaluasi)" : "(Optimal)";
   } else {
-    // Pemasukan, Tabungan, Total Saldo: Naik = Optimal, Turun = Perlu Evaluasi
+    // Tabungan & Total Saldo: Naik = Optimal, Turun = Perlu Evaluasi
     return isUp ? "(Optimal)" : "(Perlu Evaluasi)";
   }
 });
