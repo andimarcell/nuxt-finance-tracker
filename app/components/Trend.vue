@@ -35,17 +35,17 @@ const trendStatusText = computed(() => {
 
   if (lowerTitle === "pengeluaran") {
     // Pengeluaran: Naik = Buruk, Turun = Baik (Hemat)
-    return isUp ? "(Buruk)" : "(Baik)";
+    return isUp ? "(Perlu Evaluasi)" : "(Optimal)";
   } else {
     // Pemasukan, Tabungan, Total Saldo: Naik = Baik, Turun = Buruk
-    return isUp ? "(Baik)" : "(Buruk)";
+    return isUp ? "(Optimal)" : "(Perlu Evaluasi)";
   }
 });
 
 // LOGIKA WARNA STATUS TEKS (BAIK = HIJAU, BURUK = MERAH)
 const statusTextColor = computed(() => {
   if (!trendStatusText.value) return "";
-  return trendStatusText.value === "(Baik)"
+  return trendStatusText.value === "(Optimal)"
     ? "text-green-600 dark:text-green-400"
     : "text-red-600 dark:text-red-400";
 });
