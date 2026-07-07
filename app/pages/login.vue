@@ -135,6 +135,45 @@ const handleSubmit = async () => {
     isLoading.value = false;
   }
 };
+
+const isResetting = ref(false);
+
+const handleForgotPassword = async () => {
+  if (!email.value) {
+    return toast.add({
+      title: "Gagal",
+      description: "Silakan isi alamat email Anda terlebih dahulu!",
+      color: "error",
+      icon: "i-heroicons-x-circle",
+    });
+  }
+
+  isResetting.value = true;
+  try {
+    const siteUrl = window.location.origin;
+    const { error } = await supabase.auth.resetPasswordForEmail(email.value, {
+      redirectTo: `${siteUrl}/reset-password`, // Diarahkan ke halaman reset password baru
+    });
+
+    if (error) throw error;
+
+    toast.add({
+      title: "Email Reset Terkirim",
+      description: `Tautan pengaturan ulang kata sandi telah dikirim ke ${email.value}`,
+      color: "success",
+      icon: "i-heroicons-check-circle",
+    });
+  } catch (error) {
+    toast.add({
+      title: "Gagal Mengirim",
+      description: error.message,
+      color: "error",
+      icon: "i-heroicons-exclamation-circle",
+    });
+  } finally {
+    isResetting.value = false;
+  }
+};
 </script>
 
 <template>
@@ -196,6 +235,17 @@ const handleSubmit = async () => {
                 : "Kirim Magic Link"
           }}
         </UButton>
+        <!-- Tombol Lupa Password (Hanya muncul jika mode login biasa/password) -->
+        <div v-if="authMode === 'login'" class="text-right mt-1">
+          <button
+            type="button"
+            class="text-xs text-gray-500 hover:text-primary transition font-medium cursor-pointer"
+            @click="handleForgotPassword"
+            :disabled="isResetting"
+          >
+            Lupa password?
+          </button>
+        </div>
       </form>
 
       <!-- Toggle Mode Bawah -->
