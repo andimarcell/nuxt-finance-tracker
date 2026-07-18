@@ -54,10 +54,7 @@ const {
 
 // Fungsi untuk memperbarui semua data
 const refreshAll = async () => {
-  await Promise.all([
-    refreshTransactions(),
-    refreshPreviousTransactions()
-  ]);
+  await Promise.all([refreshTransactions(), refreshPreviousTransactions()]);
 };
 
 await refreshTransactions();
@@ -194,15 +191,19 @@ const cashColor = computed(() => {
   </section>
 
   <!-- bagian header transaction-->
-  <section class="flex flex-col sm:flex-row ml-1 sm:ml-0 justify-between mb-6 sm:mb-10 gap-2">
+  <section
+    class="flex flex-col sm:flex-row ml-1 sm:ml-0 justify-between mb-6 sm:mb-10 gap-2"
+  >
     <div>
       <h2 class="text-xl sm:text-2xl font-extrabold">Transaksi</h2>
       <div class="text-sm sm:text-base text-gray-500 dark:text-gray-400">
-        Terdapat {{ income.length }} pemasukan dan {{ expense.length }} pengeluaran
-        pada periode ini.
+        Terdapat {{ income.length }} pemasukan dan
+        {{ expense.length }} pengeluaran pada periode ini.
       </div>
     </div>
-    <div class="w-full sm:w-auto mt-4 sm:mt-0 flex justify-center sm:justify-end">
+    <div
+      class="w-full sm:w-auto mt-4 sm:mt-0 flex justify-center sm:justify-end"
+    >
       <TransactionModal
         v-model:modelValue="isModalOpen"
         @update:modelValue="refreshAll"
@@ -222,25 +223,42 @@ const cashColor = computed(() => {
     </div>
   </section>
 
-  <!-- bagian list transaksi-->
+  <!-- bagian list transaksi & Grafik (Grid 2 Kolom di Desktop, Vertikal di HP) -->
+  <!-- bagian list transaksi & Grafik (Grid 2 Kolom di Desktop, Grafik Naik ke Atas di HP) -->
   <section
     :key="selectedView"
     :class="{ 'opacity-50': isLoading, 'transition-opacity': true }"
+    class="grid grid-cols-1 lg:grid-cols-3 gap-8"
   >
-    <div
-      v-for="(transactionOnDay, date) in transactionGroupByDate"
-      :key="date"
-      class="mb-10"
-    >
-      <TransactionDailySummary :date="date" :transaction="transactionOnDay" />
+    <!-- Kolom 1 (Grafik) - Menggunakan order-1 (Atas di HP) dan lg:order-2 (Kanan di Desktop) -->
+    <div class="order-1 lg:order-2 lg:col-span-1">
+      <ExpenseChart :transactions="transactions" />
+    </div>
 
-      <Transaction
-        v-for="(transaction, index) in transactionOnDay"
-        :key="index"
-        :transaction="transaction"
-        @edit="onEditClick(transaction)"
-        @delete="refreshAll()"
-      />
+    <!-- Kolom 2 (Daftar Transaksi) - Menggunakan order-2 (Bawah di HP) dan lg:order-1 (Kiri di Desktop) -->
+    <div class="order-2 lg:order-1 lg:col-span-2">
+      <div
+        v-for="(transactionOnDay, date) in transactionGroupByDate"
+        :key="date"
+        class="mb-10"
+      >
+        <TransactionDailySummary :date="date" :transaction="transactionOnDay" />
+
+        <Transaction
+          v-for="(transaction, index) in transactionOnDay"
+          :key="index"
+          :transaction="transaction"
+          @edit="onEditClick(transaction)"
+          @delete="refreshAll()"
+        />
+      </div>
+
+      <div
+        v-if="transactions.length === 0 && !isLoading"
+        class="text-center py-10 text-gray-500"
+      >
+        Tidak ada transaksi pada periode ini.
+      </div>
     </div>
   </section>
   <section v-if="isLoading && transactions.length === 0">

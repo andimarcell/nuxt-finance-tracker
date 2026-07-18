@@ -243,7 +243,7 @@ const handleForgotPassword = async () => {
             @click="handleForgotPassword"
             :disabled="isResetting"
           >
-            Lupa password?
+            Lupa password? / Reset Password
           </button>
         </div>
       </form>
