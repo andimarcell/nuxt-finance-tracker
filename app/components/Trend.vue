@@ -100,10 +100,10 @@ const { currency } = useCurrency(amount);
     >
       <USkeleton class="h-8 w-full" v-if="loading" />
 
-      <!-- Kita pakai ClientOnly buat ngehindarin error merah (Hydration mismatch) -->
+      <!-- ClientOnly buat ngehindarin error merah (Hydration mismatch) -->
       <ClientOnly v-else>
         <!-- Flex items-start bikin teks sejajar di atas -->
-        <div class="flex items-start">
+        <div class="flex items-start whitespace-nowrap">
           <span>{{ currency.main }}</span>
           <!-- sup bikin teks naik, text-sm ngecilin ukurannya -->
           <sup
