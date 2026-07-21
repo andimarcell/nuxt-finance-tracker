@@ -1,6 +1,9 @@
 import { defineNuxtPlugin } from '#app'
-import VueApexCharts from 'vue3-apexcharts'
 
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.use(VueApexCharts)
+export default defineNuxtPlugin(async (nuxtApp) => {
+  // Hanya muat dan impor library jika sudah berada di sisi klien (browser)
+  if (import.meta.client) {
+    const VueApexCharts = (await import('vue3-apexcharts')).default
+    nuxtApp.vueApp.use(VueApexCharts)
+  }
 })
